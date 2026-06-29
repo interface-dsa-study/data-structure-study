@@ -1,0 +1,19 @@
+# CMake 빌드 디렉터리
+cmake-build-*/
+build/
+out/
+
+# IDE 설정
+.idea/
+.vscode/
+
+# C 컴파일 산출물
+*.o
+*.out
+*.exe
+
+# macOS 디버그 심볼 디렉터리
+*.dSYM/
+
+# macOS 시스템 파일
+.DS_Store
