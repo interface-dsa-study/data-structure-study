@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+int sum(int n) {
+    if (n == 1) return 1;
+    else return n + sum(n-1);
+}
+
+int main() {
+    int x; scanf("%d", &x);
+    printf("%d", sum(x));
+    return 0;
+}
