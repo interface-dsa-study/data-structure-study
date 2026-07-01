@@ -195,6 +195,8 @@ foreach (STUDY_SOURCE_FILE IN LISTS STUDY_SOURCE_FILES)
     add_executable(
             "${STUDY_TARGET_NAME}"
             "${STUDY_SOURCE_FILE}"
+            data_structures/00_c_review/p_02/taeho.c
+            data_structures/00_c_review/p_02/taeho/taeho.c
     )
 
     set_target_properties(
