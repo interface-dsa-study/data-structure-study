@@ -1,5 +1,0 @@
-#include <stdio.h>
-int main() {
-    printf("hello this is taeho");
-    return 0;
-}
