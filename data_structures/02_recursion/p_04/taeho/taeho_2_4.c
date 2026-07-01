@@ -1,15 +1,25 @@
 #include <stdio.h>
 #include<stdlib.h>
-int max(int*,int,int);
+int max(int*,int);
 int main() {
-    int n;
-    scanf("%d",&n);
-    int *a=(int*)calloc(n,sizeof(int));
-    int m=max(a,n,*(a+n));
+    int arr_length;
+    scanf("%d",&arr_length);
+    int *arr=(int*)calloc(arr_length,sizeof(int));
+    if (arr==NULL) {
+        printf("calloc failed");
+        return -1;
+    }
+    for (int *arr_pointer=arr;arr_pointer<arr+arr_length;arr_pointer++) {
+        scanf("%d",arr_pointer);
+    }
+    int max_value=max(arr,arr_length);
+    printf("%d",max_value);
+    free(arr);
     return 0;
 }
-int max(int *a,int n,int p) {
-    if (p>*a)return p;
-    else if (n==0)return *a;
-    return max(a+1,n-1,p);
+int max(int *arr,int arr_size) {///this was quite hard
+    if (arr_size==1)return *arr;
+    int max_value=max(arr,arr_size-1);
+    if (max_value>*(arr+arr_size-1))return max_value;
+    else return *(arr+arr_size-1);
 }
