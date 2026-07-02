@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+void flip(int *a,int range);
 int main() {
     int arr_length;
     scanf("%d",&arr_length);
@@ -13,5 +14,11 @@ int main() {
     for (int i=0;i<flip_time;i++) {
         int a,b;
         scanf("%d %d",&a,&b);
+        flip(arr+a,b-a);
+    }
+}
+void flip(int *a,int range) {
+    for (int *p=a+range;a<a+(range+1)/2;a++) {
+
     }
 }
