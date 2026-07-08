@@ -5,13 +5,17 @@ typedef struct node {
     struct node *next;
 }Node;
 Node *add_node(Node *node) {
-    Node *new_node=(Node*)malloc(sizeof(Node));
-    if (new_node==NULL) {
-        fprintf(stderr,"node mallod")
+    node->next=(Node*)malloc(sizeof(Node));
+    if (node->next==NULL) {
+        fprintf(stderr,"node mallod failed");
+        exit(-1);
     }
     int value;
     scanf("%d",&value);
-    return
+    node->next->value=value;
+    node=node->next;
+    node->next=NULL;
+    return node;
 }
 int main() {
     Node *s1,*s2;
@@ -30,8 +34,15 @@ int main() {
     s2->next=NULL;
 
     int s1_size,s2_size;
+    Node *trail_node=s1;
     scanf("%d",&s1_size);
     for (int i=0;i<s1_size;i++) {
-        s1=
+        trail_node=add_node(trail_node);
     }
+    trail_node=s1;
+    scanf("%d",&s2_size);
+    for (int i=0;i<s1_size;i++) {
+        trail_node=add_node(trail_node);
+    }
+    
 }
