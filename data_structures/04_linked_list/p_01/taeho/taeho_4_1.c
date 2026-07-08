@@ -6,7 +6,7 @@ typedef struct node {
     struct node *next;
 }Node;
 typedef struct list {
-    Node *header;
+    Node *head;
     Node *trailer;
     int size;
 }List;
@@ -44,25 +44,25 @@ int main() {
                 break;
         }
     }
-    free_list(list.header);
+    free_list(list.head);
     return 0;
 }
 void initialize(List *list) {
-    list->header=(Node*)malloc(sizeof(Node));
-    if (list->header==NULL) {
+    list->head=(Node*)malloc(sizeof(Node));
+    if (list->head==NULL) {
         fprintf(stderr,"header malloc failed");
         exit(-1);
     }
     list->trailer=(Node*)malloc(sizeof(Node));
     if (list->trailer==NULL) {
         fprintf(stderr,"header malloc failed");
-        free(list->header);
+        free(list->head);
         exit(-1);
     }
-    list->header->prev=NULL;
-    list->header->element='\0';
-    list->header->next=list->trailer;
-    list->trailer->prev=list->header;
+    list->head->prev=NULL;
+    list->head->element='\0';
+    list->head->next=list->trailer;
+    list->trailer->prev=list->head;
     list->trailer->element='\0';
     list->trailer->next=NULL;
     list->size=0;
@@ -75,13 +75,13 @@ void add(List *list,int rank,char element) {
     Node *new_node=(Node*)malloc(sizeof(Node));
     if (new_node==NULL) {
         fprintf(stderr,"new node malloc failed");
-        free_list(list->header);
+        free_list(list->head);
         exit(-1);
     }
     new_node->element=element;
     Node *prev_node;
     Node *next_node;
-    next_node=list->header;
+    next_node=list->head;
     for (int i=0;i<rank;i++) {
         next_node=next_node->next;
     }
@@ -100,7 +100,7 @@ void delete(List *list,int rank){
     Node *target_node;
     Node *prev_node;
     Node *next_node;
-    target_node=list->header;
+    target_node=list->head;
     for (int i=0;i<rank;i++) {
        target_node=target_node->next;
     }
@@ -116,14 +116,14 @@ void get(List *list,int rank) {
         printf("invalid position\n");
         return;
     }
-    Node *tmp=list->header->next;
+    Node *tmp=list->head->next;
     for (int i=1;i<rank;i++) {
         tmp=tmp->next;
     }
     printf("%c\n",tmp->element);
 }
 void print(List *list) {
-    Node *tmp=list->header->next;
+    Node *tmp=list->head->next;
     for (int i=0;i<list->size;i++) {
         printf("%c",tmp->element);
         tmp=tmp->next;
