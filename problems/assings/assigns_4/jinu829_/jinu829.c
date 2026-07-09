@@ -47,8 +47,9 @@ int calculatortwo(int a, int b, char x)
 
 int prefix(char *str, int index, int maxindex)
 {
+    printf("%c\n", str[index]);
     if (index == maxindex)
-        return str[index];
+        return str[index] - '0';
     if (str[index] == 'p' || str[index] == 'm' || str[index] == '!')
         return calculatorone(prefix(str, index + 1, maxindex), str[index]);
     else if (str[index] >= '0' && str[index] <= '9')
@@ -68,7 +69,7 @@ int main()
     str = (char **)malloc(sizeof(char *) * numberofinput);
     for (int i = 0; i < numberofinput; i++)
     {
-        scanf("%s ", tmp);
+        scanf(" %s", tmp);
         str[i] = (char *)malloc(sizeof(char) * (strlen(tmp) + 1));
         strcpy(str[i], tmp);
         index = strlen(str[i]);
