@@ -11,7 +11,6 @@ Node *append_node(Node *trail_node,int value);
 Set set_create(int set_size);
 void set_union(Set *A,Set *B);
 void set_intersect(Set *A,Set *B);
-void print(Set *set);
 void free_set(Node *node);
 int main() {
     int A_size,B_size;
@@ -66,7 +65,7 @@ void set_union(Set *A,Set *B) {
     result.header->value=0;
     Node *A_pointer=A->header->next;
     Node *B_pointer=B->header->next;
-    Node *trail_node=result.header->next;
+    Node *trail_node=result.header;
     while (A_pointer&&B_pointer) {
         if (A_pointer->value<B_pointer->value) {
             trail_node=append_node(trail_node,A_pointer->value);
@@ -90,7 +89,9 @@ void set_union(Set *A,Set *B) {
         trail_node=append_node(trail_node,B_pointer->value);
         B_pointer=B_pointer->next;
     }
-    print(&result);
+    if (result.header->next==NULL)printf("0");
+    for (Node *node=result.header->next;node;node=node->next)printf(" %d",node->value);
+    printf("\n");
     free_set(result.header);
 }
 void set_intersect(Set *A,Set *B) {
@@ -103,7 +104,7 @@ void set_intersect(Set *A,Set *B) {
     result.header->value=0;
     Node *A_pointer=A->header->next;
     Node *B_pointer=B->header->next;
-    Node *trail_node=result.header->next;
+    Node *trail_node=result.header;
     while (A_pointer&&B_pointer) {
         if (A_pointer->value<B_pointer->value) A_pointer=A_pointer->next;
         else if (A_pointer->value>B_pointer->value) B_pointer=B_pointer->next;
@@ -113,11 +114,10 @@ void set_intersect(Set *A,Set *B) {
             B_pointer=B_pointer->next;
         }
     }
-    print(&result);
+    if (result.header->next==NULL)printf("0");
+    for (Node *node=result.header->next;node;node=node->next)printf(" %d",node->value);
+    printf("\n");
     free_set(result.header);
-}
-void print(Set *set) {
-    for (Node *node=set->header->next;node;node=node->next)printf(" %d",node->value);
 }
 void free_set(Node *node) {
     if (node) {
