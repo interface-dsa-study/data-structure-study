@@ -23,7 +23,7 @@ void push(Stack *stack,char element) {
     new_node->element=element;
     new_node->next=stack->top;
     stack->top=new_node;
-    stack->size+=1;
+    stack->size++;
 }
 char pop(Stack *stack) {
     if (stack->size==0) {
@@ -34,6 +34,7 @@ char pop(Stack *stack) {
     char element=tmp->element;
     stack->top=stack->top->next;
     free(tmp);
+    stack->size--;
     return element;
 }
 char peek(Stack *stack) {

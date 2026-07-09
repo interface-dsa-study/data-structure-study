@@ -1,10 +1,10 @@
 #include <stdio.h>
 void check(char *string) {
+    char *string_pointer=string;
     int count=0;
     int flag=2;//아직 아무것도 모르는 상태
     char stack[501]={0};
     char *stack_pointer=stack;
-    char *string_pointer=string;
     for (;string_pointer<string+1000&&*string_pointer!='\n';string_pointer++) {
         switch (*string_pointer) {
             case '(':
@@ -15,31 +15,20 @@ void check(char *string) {
                 count++;
                 break;
             case ')':
-                if (stack_pointer==stack&&flag==2) flag=0;
-                if (*stack_pointer=='(') {
-                    *stack_pointer='\0';
-                    if (stack_pointer>stack) stack_pointer--;
-                }
-                else flag=0;
-                count++;
-                break;
             case '}':
-                if (stack_pointer==stack&&flag==2) flag=0;
-                if (*stack_pointer=='{') {
-                    *stack_pointer='\0';
-                    if (stack_pointer>stack) stack_pointer--;
-                }
-                else flag=0;
-                count++;
-                break;
             case ']':
-                if (stack_pointer==stack&&flag==2) flag=0;
-                if (*stack_pointer=='[') {
+                count++;
+                if (stack_pointer==stack&&flag==2) {
+                    flag=0;
+                    continue;
+                }
+                if (*string_pointer==')'&&*stack_pointer=='('
+                  ||*string_pointer=='}'&&*stack_pointer=='{'
+                  ||*string_pointer==']'&&*stack_pointer=='[') {
                     *stack_pointer='\0';
                     if (stack_pointer>stack) stack_pointer--;
-                }
+                  }
                 else flag=0;
-                count++;
                 break;
         }
     }
