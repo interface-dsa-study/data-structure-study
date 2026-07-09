@@ -21,7 +21,6 @@ char pop(Stack *stack) {
     }
     stack->top_index-=1;
     return *(stack->element+stack->top_index+1);
-
 }
 char peek(Stack *stack) {
     if (stack->top_index==-1) {
@@ -68,10 +67,11 @@ int main() {
     getchar();
     for (int i=0;i<calc_time;i++) {
         char input[6]={0};
-        scanf(" %s",input);
+        scanf("%s",input);
+        getchar();
         if (!strcmp(input,"PUSH")) {
             char element;
-            scanf(" %c",&element);
+            scanf("%c",&element);
             push(&stack,element);
         }
         else if (!strcmp(input,"POP")) {
@@ -88,11 +88,13 @@ int main() {
         else if (!strcmp(input,"UpR")) {
             int n;
             scanf("%d",&n);
+            getchar();
             up_rotate(&stack,n);
         }
         else if (!strcmp(input,"DownR")) {
             int n;
             scanf("%d",&n);
+            getchar();
             down_rotate(&stack,n);
         }
         else if (!strcmp(input,"PRINT")) {
@@ -100,4 +102,5 @@ int main() {
         }
         printf("\n");
     }
+    return 0;
 }
