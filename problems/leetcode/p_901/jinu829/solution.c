@@ -1,49 +1,44 @@
-
-
 typedef struct
 {
-    int I[10 ^ 4]; // 그 전에 가지고 있던 최대 값의 인덱스값
-    int X[10 ^ 4]; // 그 전에 가지고 있던 최대 값
+    int A[10 ^ 4]; // 그 전에 가지고 있던 최대 값의 인덱스값
+    int x[10 ^ 4]; // 그 전에 가지고 있던 최대 값
     int n;         // 인덱스값
-    int nx;        // X, I배열의 인덱스값.
+    int nx;        // X, A배열의 인덱스값.
 } StockSpanner;
 
 StockSpanner *stockSpannerCreate()
 {
-    StockSpanner s;
-    s.n = 0;
-    s.nx = 0;
-    return &s;
+    StockSpanner *s;
+    s = (StockSpanner *)malloc(sizeof(StockSpanner));
+    s->n = -1;
+    s->nx = -1;
+    return s;
 }
 
 int stockSpannerNext(StockSpanner *obj, int price)
 { // 기간을 반환하는 함수
-    if (obj->n == 0)
+    int S;
+    while (obj->x[obj->A[obj->nx]] < price && obj->nx >= 0)
     {
-        obj->I[obj->nx] = 1;
-        obj->X[obj->nx] = price;
-        return 1;
+        obj->nx = obj->nx - 1;
+    }
+    if (obj->nx == -1)
+    {
+        obj->n += 1;
+        S = obj->n;
     }
     else
     {
-        while (obj->X[obj->nx] < price && obj->nx >= 0)
-        {
-            obj->nx = obj->nx - 1;
-        }
-        if (obj->nx == 0)
-        {
-            obj->n += 1;
-            return obj->n;
-        }
-        else
-        {
-            return obj.
-        }
+        S = obj->n - obj->A[obj->nx];
     }
+    obj->nx += 1;
+    obj->A[obj->nx] = obj->n;
+    return S;
 }
 
 void stockSpannerFree(StockSpanner *obj)
 { // 공간 해제
+    free(obj);
 }
 
 /**

@@ -4,45 +4,71 @@ typedef struct node {
     int value;
     struct node *next;
 }Node;
-Node *add_node(Node *node) {
-    node->next=(Node*)malloc(sizeof(Node));
-    if (node->next==NULL) {
-        fprintf(stderr,"node mallod failed");
-        exit(-1);
-    }
-    int value;
-    scanf("%d",&value);
-    node->next->value=value;
-    node=node->next;
-    node->next=NULL;
-    return node;
-}
+Node* append_node(int set_size);
+int subset(Node *A,Node *B);
+void free_set(Node *node);
 int main() {
-    Node *s1,*s2;
-    s1=(Node*)malloc(sizeof(Node));
-    if (s1==NULL) {
-        fprintf(stderr,"list1 malloc failed");
-        exit(-1);
-    }
-    s1->next=NULL;
-    s2=(Node*)malloc(sizeof(Node));
-    if (s2==NULL) {
-        fprintf(stderr,"list2 malloc failed");
-        free(s1);
-        exit(-1);
-    }
-    s2->next=NULL;
+    int A_size,B_size;
+    scanf("%d",&A_size);
+    Node *A=append_node(A_size);
+    scanf("%d",&B_size);
+    Node *B=append_node(B_size);
 
-    int s1_size,s2_size;
-    Node *trail_node=s1;
-    scanf("%d",&s1_size);
-    for (int i=0;i<s1_size;i++) {
-        trail_node=add_node(trail_node);
+    int result=subset(A,B);
+    printf("%d",result);
+
+    free_set(A);
+    free_set(B);
+    return 0;
+}
+
+Node* append_node(int set_size) {
+    if (set_size==0) {
+        return NULL;
     }
-    trail_node=s1;
-    scanf("%d",&s2_size);
-    for (int i=0;i<s1_size;i++) {
-        trail_node=add_node(trail_node);
+    Node *set=(Node*)malloc(sizeof(Node));
+    if (set==NULL) {
+        fprintf(stderr,"node malloc failed");
+        exit(-1);
     }
-    
+    scanf("%d",&set->value);
+    set->next=NULL;
+    Node *trail_node=set;
+    for (int i=0;i<set_size-1;i++) {
+        trail_node->next=(Node*)malloc(sizeof(Node));
+        if (trail_node->next==NULL) {
+            fprintf(stderr,"node malloc failed");
+            exit(-1);
+        }
+        trail_node=trail_node->next;
+        scanf("%d",&trail_node->value);
+        trail_node->next=NULL;
+    }
+    return set;
+}
+int subset(Node *A,Node *B) {
+    Node *A_pointer=A;
+    Node *B_pointer=B;
+    while (A_pointer&&B_pointer) {
+        if (A_pointer->value>B_pointer->value) {
+            B_pointer=B_pointer->next;
+        }
+        else if (A_pointer->value<B_pointer->value) {
+            return A_pointer->value;
+        }
+        else {
+            A_pointer=A_pointer->next;
+            B_pointer=B_pointer->next;
+        }
+    }
+    if (A_pointer) {
+        return A_pointer->value;
+    }
+    return 0;
+}
+void free_set(Node *node) {
+    if (node) {
+        free_set(node->next);
+        free(node);
+    }
 }
