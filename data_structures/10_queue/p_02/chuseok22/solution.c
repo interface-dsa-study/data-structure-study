@@ -110,7 +110,7 @@ int delete_front(Dequeue *dequeue) {
 int delete_rear(Dequeue *dequeue) {
   if (is_empty(dequeue)) {
     printf("underflow\n");
-    free(dequeue);
+    destroy_dequeue(dequeue);
     exit(EXIT_SUCCESS);
   }
 
