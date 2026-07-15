@@ -74,7 +74,7 @@ void down_rotate(Stack *stack,int count) {
     B->next=D;
     stack->top=C;
 }
-void print(Stack *stack) {
+void print_pop_operator(Stack *stack) {
     for (Node *pointer=stack->top;pointer;pointer=pointer->next) {
         printf("%c",pointer->element);
     }
@@ -127,7 +127,7 @@ int main() {
             down_rotate(&stack,n);
         }
         else if (!strcmp(input,"PRINT")) {
-            print(&stack);
+            print_pop_operator(&stack);
         }
         printf("\n");
     }
