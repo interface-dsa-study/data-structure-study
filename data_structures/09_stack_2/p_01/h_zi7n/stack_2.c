@@ -44,8 +44,8 @@ int main(void) {
                     if (pop(stack + i) == '&') {
                         printf("&&");
                     }
-                    else if (pop(stack + i) == 'l') {
-                        printf("ll");
+                    else if (pop(stack + i) == '|') {
+                        printf("||");
                     }
                     else printf("%c", sentence[j]);
                 }
@@ -58,20 +58,20 @@ int main(void) {
                         if (sentence[j] == '+') plusorminus = 'p';
                         else plusorminus = 'm';
                     }
-                    if (sentence[j] == '&' || sentence[j] == '|') {
-                        j++;
-                    }
-                    while ((stack + i)->top != -1) {
-                        // 여기 부분을 모르겠음.
-                        if ((stack+i)->string[j] == '!') {
+                }
+                else if (sentence[j] == '&' || sentence[j] == '|') {
+                    j++;
+                }
+                while ((stack + i)->top != -1) {
+                    // 여기 부분을 모르겠음.
+                    if ((stack+i)->string[j] == '!') {
 
-                        }
-                        if (pop(stack + i) == '&') printf("&&");
-                        else if (pop(stack + i) == '|') printf("||");
-                        else if (pop(stack + i) == 'p') printf("+");
-                        else if (pop(stack + i) == 'm') printf("-");
-                        else printf("%c", pop(stack + i));
                     }
+                    if (pop(stack + i) == '&') printf("&&");
+                    else if (pop(stack + i) == '|') printf("||");
+                    else if (pop(stack + i) == 'p') printf("+");
+                    else if (pop(stack + i) == 'm') printf("-");
+                    else printf("%c", pop(stack + i));
                 }
                 push(stack + i, sentence[j]);
             }
