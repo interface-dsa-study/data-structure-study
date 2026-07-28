@@ -55,22 +55,28 @@ void enqueue(Queue *queue,Node *pointer) {
     }//예외처리
     queue->queue[queue->rear-1]=pointer;//큐 맨뒤에 포인터(노드 주소) 저장
 }
-Node* dequeue(Queue *queue) {
-    Node *target=queue->queue[queue->front++];//큐 맨앞 데이터(노드 주소) 추출
-    return target;
+Node* dequeue(Queue *queue) {//큐 맨앞 데이터(노드 주소) 추출
+    if (queue->front==queue->rear) {
+        fprintf(stderr,"empty queue exception");
+        exit(1);
+    }
+    return queue->queue[queue->front++];
 }
 Node* search(int target,Node *loot_node) {//트리 레벨 순회 후 찾는 노드 반환
     if (loot_node) {
         if (!target)return loot_node;
         Queue *queue=create_queue();//레벨순회->큐 생성
         int index=0;
-        int level=0;
         Node *pointer=loot_node;
         enqueue(queue,loot_node);
-        while (pointer){
+        while (queue->front<queue->rear){
             pointer=dequeue(queue);//큐에 저장되어있던 주소 꺼내기
+            if (index==target) {
+                free(queue->queue);
+                free(queue);
+                return pointer;
+            }
             index++;
-            if (index==target)return pointer;
             if (pointer->left) {
                 enqueue(queue,pointer->left);
             }
@@ -78,8 +84,17 @@ Node* search(int target,Node *loot_node) {//트리 레벨 순회 후 찾는 노�
                 enqueue(queue,pointer->right);
             }
         }
+    free(queue->queue);
+    free(queue);
     }
     return NULL;
+}
+void free_node(Node *node) {
+    if (node) {
+        free_node(node->left);
+        free_node(node->right);
+        free(node);
+    }
 }
 int main() {
     Node *loot_node=create_tree();
@@ -94,4 +109,6 @@ int main() {
     }
     else  printf("-1");
     printf("\n");
+    free_node(loot_node);
+    return 0;
 }
