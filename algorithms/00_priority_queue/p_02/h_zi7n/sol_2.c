@@ -13,8 +13,8 @@ int main(void) {
     }
     priority_queue* sorted_list = queue;
     for (int i = 0; i < N; i++) {
-        for (int j = 0; j < i - 1; j++) {
-            if ((sorted_list + j)->element < (queue + i)->element) {
+        for (int j = i - 1; j > 0; j--) {
+            if ((sorted_list + j)->element > (queue + i)->element) {
                 (sorted_list + j + 1)->element = (sorted_list + j)->element;
                 (sorted_list + j)->element = (queue + i)->element;
             }
