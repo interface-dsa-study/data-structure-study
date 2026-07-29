@@ -9,19 +9,19 @@ int *inplacehamsu(int *arr, int n)
         return arr;
     }
     int max = 0;
-    int maxint;
+    int maxindex;
     int tmp;
     for (int i = 0; i < n; i++)
     {
         if (max < arr[i])
         {
             max = arr[i];
-            maxint = i;
+            maxindex = i;
         }
     }
     tmp = arr[n - 1];
-    arr[n - 1] = arr[maxint];
-    arr[maxint] = tmp;
+    arr[n - 1] = arr[maxindex];
+    arr[maxindex] = tmp;
     return inplacehamsu(arr, n - 1);
 }
 
