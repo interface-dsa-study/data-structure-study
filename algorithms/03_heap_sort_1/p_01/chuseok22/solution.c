@@ -39,16 +39,19 @@ void downHeap(int index) {
     return;
   }
 
-  // 왼쪽 자식과 비교
-  if (heap[index] < heap[index * 2]) {
-    swap(&heap[index], &heap[index * 2]);
-    downHeap(index * 2);
-  }
-
-  // 오른쪽 자식과 비교
-  if (heap[index] < heap[index * 2 + 1]) {
-    swap(&heap[index], &heap[index * 2 + 1]);
-    downHeap(index * 2 + 1);
+  // 자식들 먼저 비교
+  if (heap[index * 2] > heap[index * 2 + 1]) {
+    // 왼쪽 자식과 비교
+    if (heap[index] < heap[index * 2]) {
+      swap(&heap[index], &heap[index * 2]);
+      downHeap(index * 2);
+    }
+  } else {
+    // 오른쪽 자식과 비교
+    if (heap[index] < heap[index * 2 + 1]) {
+      swap(&heap[index], &heap[index * 2 + 1]);
+      downHeap(index * 2 + 1);
+    }
   }
 }
 
