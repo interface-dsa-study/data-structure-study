@@ -12,10 +12,12 @@ int main() {
     for (;pointer<array+n;pointer++) {
         scanf("%d",pointer);
     }
+    int tmp;
+    int *sort_pointer;
     for (pointer=array+1;pointer<array+n;pointer++) {
-        for (int *sort_pointer=pointer-1;sort_pointer>=array;sort_pointer--) {
+        for (sort_pointer=pointer-1;sort_pointer>=array;sort_pointer--) {
             if (*sort_pointer>*(sort_pointer+1)) {
-                int tmp=*sort_pointer;
+                tmp=*sort_pointer;
                 *sort_pointer=*(sort_pointer+1);
                 *(sort_pointer+1)=tmp;
             }
