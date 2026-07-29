@@ -1,13 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void swap(int *value1, int *value2) {
+  int tmp = *value1;
+  *value1 = *value2;
+  *value2 = tmp;
+}
+
 int *insertionSort(int *array, int size) {
   for (int i = 1; i < size; i++) {
     for (int j = i; j > 0; j--) {
       if (array[j - 1] > array[j]) {
-        int tmp = array[j - 1];
-        array[j - 1] = array[j];
-        array[j] = tmp;
+        swap(&array[j - 1], &array[j]);
       }
     }
   }
