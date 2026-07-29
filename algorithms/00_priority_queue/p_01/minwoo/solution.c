@@ -17,11 +17,9 @@ void selection_sort(int *arr, int len) {
         if (len == -1) {
             break;
         }
-        printf("| %d|", arr[changenum]);
-        printf("< %d %d>", len, i);
         temp = arr[changenum];
         arr[changenum] = arr[len];
-        arr[len] = arr[changenum];
+        arr[len] = temp;
     }
 }
 
