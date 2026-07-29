@@ -73,7 +73,7 @@ int main() {
     char order; // 명령어 입력.
     int data; // 키 값 입력.
     while (1) {
-        scanf("%c", &order);
+        if (scanf(" %c", &order) != 1) break;
         if (order == 'q') break; // 종료조건.
         if (order == 'i') { // insert 명령일 때.
             scanf("%d", &data);
