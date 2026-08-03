@@ -10,11 +10,16 @@ typedef struct stack {
 }Stack;
 void push(Stack *stack, char value) {
     Node *new_node=(Node*)malloc(sizeof(Node));
+    if (new_node==NULL) {
+        fprintf(stderr,"node push failed");
+        exit(1);
+    }
     new_node->value=value;
     new_node->next=stack->top;
     stack->top=new_node;
 }
 char pop(Stack *stack) {
+    if (!stack->top)return '\0';
     Node *target=stack->top;
     char value=target->value;
     stack->top=target->next;
@@ -22,6 +27,7 @@ char pop(Stack *stack) {
     return value;
 }
 void print_pop_operator(Stack *stack) {
+    if (!stack->top)return;
     if (stack->top->value=='p') {
         printf("+");
         pop(stack);
@@ -31,7 +37,8 @@ void print_pop_operator(Stack *stack) {
         pop(stack);
     }
     else if (stack->top->value=='&'||stack->top->value=='|') {
-        printf("%c%c",stack->top->value,pop(stack));
+        char ch=pop(stack);
+        printf("%c%c",ch,ch);
     }
     else printf("%c",pop(stack));
 }
@@ -54,6 +61,8 @@ int priority(char value) {
             return 2;
         case '|':
             return 1;
+        default:
+            return 0;
     }
 }
 int is_operator(char value) {
@@ -78,27 +87,36 @@ char is_unary(char *string,int index) {
     if (string[index]=='!')return string[index];
     else if (string[index]=='+'&&(is_operator(string[index-1])||string[index-1]=='('))return 'p';
     else if (string[index]=='-'&&(is_operator(string[index-1])||string[index-1]=='('))return 'm';
+    return string[index];
 }
-void change(char *string) {
+void change() {
+    char string[101]={0};
+    scanf("%s",string);
     Stack stack;
     stack.top=NULL;
-    for (int index=0;index<strlen(string);index++) {
+    int input_length=strlen(string);
+    for (int index=0;index<input_length;index++) {
         char value=string[index];
         if (value>='A'&&value<='Z') printf("%c",value);
         else if (value=='(') push(&stack,value);
         else if (value==')') {
             while (stack.top&&stack.top->value!='(') print_pop_operator(&stack);
             pop(&stack);
-        }
-        else {
-            if ((value=='&'||value=='|')&&string[index+1]==value) index++;
-            if (value=='+'||value=='-')value=is_unary(string,index);
-            while (stack.top&&
-                   stack.top->value!='('&&
-                   priority(stack.top->value)>=priority(value))
+            while (stack.top
+                    &&(stack.top->value=='!'||
+                    stack.top->value=='p'||
+                    stack.top->value=='m'))
                 print_pop_operator(&stack);
         }
+        else {
+            if (value=='&'||value=='|') index++;
+            if (value=='+'||value=='-')value=is_unary(string,index);
+            while (stack.top&&
+                    stack.top->value!='('&&
+                    priority(stack.top->value)>=priority(value))
+                print_pop_operator(&stack);
         push(&stack,value);
+        }
     }
     while (stack.top) {
         print_pop_operator(&stack);
@@ -109,8 +127,6 @@ int main() {
     int count;
     scanf("%d",&count);
     for (int i=0;i<count;i++) {
-        char string[101]={0};
-        scanf("%s",string);
-        change(string);
+        change();
     }
 }
