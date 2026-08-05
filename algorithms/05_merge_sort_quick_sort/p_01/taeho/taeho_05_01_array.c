@@ -1,26 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
-int* merge(int* array,int *sorted_array,int left,int middle,int right) {//left랑 right랑 인덱스로 써서 해야 함
+void merge(int* array,int *sorted_array,int left,int middle,int right) {
     int *left_pointer=array+left;
-    int *right_pointer=array+middle+1;
+    int *right_pointer=array+middle;
     int *sorted_pointer=sorted_array;
     while (left_pointer<array+middle&&right_pointer<array+right) {
         if (*left_pointer<*right_pointer) *sorted_pointer++=*left_pointer++;
         else if (*left_pointer>*right_pointer) *sorted_pointer++=*right_pointer++;
         else if (*left_pointer==*right_pointer) {
-            *sorted_pointer++=*right_pointer++;
             *sorted_pointer++=*left_pointer++;
+            *sorted_pointer++=*right_pointer++;
         }
     }
     while (left_pointer<array+middle) *sorted_pointer++=*left_pointer++;
     while (right_pointer<array+right) *sorted_pointer++=*right_pointer++;
-    return sorted_array;
+    int *array_pointer=array+left;
+    sorted_pointer=sorted_array;
+    while (array_pointer<array+right) *array_pointer++=*sorted_pointer++;
 }
-int* merge_sort(int *array,int *sorted_array,int size) {//여기서 재귀를 써야 하는데...
-    int left=0;
-    int middle=size/2;
-    int right=size;
-    sorted_array=merge_sort(array+middle,sorted_array+middle,size/2)
+void merge_sort(int *array,int *sorted_array,int left,int right) {//여기서 재귀를 써야 하는데...
+    if (left+1>=right) {
+        return;
+    }
+    int middle=(left+right+1)/2;
+    merge_sort(array,sorted_array,left,middle);
+    merge_sort(array,sorted_array,middle,right);
+    merge(array,sorted_array,left,middle,right);
 }
 int main() {
     int size;
@@ -36,11 +41,12 @@ int main() {
         fprintf(stderr,"sorted array malloc failed");
         exit(1);
     }
-    array=merge_sort(array,sorted_array,size);
+    merge_sort(array,sorted_array,0,size);
 
-    for (int *pointer=array;pointer<array+size;pointer++) {
+    for (int *pointer=sorted_array;pointer<sorted_array+size;pointer++) {
         printf(" %d",*pointer);
     }
     free(array);
+    free(sorted_array);
     return 0;
 }
