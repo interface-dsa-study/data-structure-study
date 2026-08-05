@@ -3,10 +3,11 @@
 
 void merge(int *arr, int *arrcopy, int start, int mid, int end)
 {
+    printf("%d %d %d\n", start, mid, end);
     int i = start;
-    int j = mid;
-    int count = 0;
-    while (i < mid && j < end)
+    int j = mid + 1;
+    int count = start;
+    while (i <= mid && j <= end)
     {
         if (arr[i] > arr[j])
         {
@@ -26,30 +27,42 @@ void merge(int *arr, int *arrcopy, int start, int mid, int end)
         }
         count++;
     }
-    while (i < mid)
+    while (i <= mid)
     {
         arrcopy[count] = arr[i];
         i += 1;
         count++;
     }
-    while (j < end)
+    while (j <= end)
     {
         arrcopy[count] = arr[j];
         j += 1;
         count++;
     }
+    for (int i = start; i <= end; i++)
+    {
+        arr[i] = arrcopy[i];
+    }
+    for (int i = start; i <= end; i++)
+    {
+        printf(" %d", arr[i]);
+    }
+    printf("\n");
+    return;
 }
 
 void mergeSort(int *arr, int *arrcopy, int start, int end)
 {
-    printf("%d\n", arr[0]);
+    // printf("%d\n", arr[start]);
     if (end > start)
     {
         int mid = (start + end) / 2;
+        // printf("%d %d %d\n", start, end, mid);
         mergeSort(arr, arrcopy, start, mid);
-        mergeSort(arr, arrcopy, mid, end);
+        mergeSort(arr, arrcopy, mid + 1, end);
         merge(arr, arrcopy, start, mid, end);
     }
+    return;
 }
 
 int main()
@@ -65,9 +78,10 @@ int main()
     for (int i = 0; i < n; i++)
     {
         scanf("%d", &arr[i]);
+        printf("%d\n", arr[i]);
     }
 
-    mergeSort(arr, arrcopy, 0, n);
+    mergeSort(arr, arrcopy, 0, n - 1);
 
     for (int i = 0; i < n; i++)
     {
