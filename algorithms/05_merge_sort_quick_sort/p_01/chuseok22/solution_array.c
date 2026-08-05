@@ -17,20 +17,22 @@ void merge(int array[], int buffer[], int left, int middle, int right) {
     buffer_index++;
   }
 
-  if (left_index == middle) {
-    // 왼쪽 배열 모두 소진
-    while (right_index <= right) {
-      buffer[buffer_index] = array[right_index];
-      right_index++;
-      buffer_index++;
-    }
-  } else {
-    // 오른쪽 배열 모두 소진
-    while (left_index <= middle) {
-      buffer[buffer_index] = array[left_index];
-      left_index++;
-      buffer_index++;
-    }
+  // 왼쪽 배열 남은 원소
+  while (left_index <= middle) {
+    buffer[buffer_index] = array[left_index];
+    left_index++;
+    buffer_index++;
+  }
+
+  // 오른쪽 배열 남은 원소
+  while (right_index <= right) {
+    buffer[buffer_index] = array[right_index];
+    right_index++;
+    buffer_index++;
+  }
+
+  for (int i = left; i <= right; i++) {
+    array[i] = buffer[i];
   }
 }
 
@@ -41,7 +43,7 @@ void mergeSort(int array[], int buffer[], int left, int right) {
 
   int middle = (left + right) / 2;
   mergeSort(array, buffer, left, middle);
-  mergeSort(array, buffer, middle, right);
+  mergeSort(array, buffer, middle + 1, right);
   merge(array, buffer, left, middle, right);
 }
 
@@ -56,6 +58,7 @@ int main(void) {
 
   int *buffer = malloc(sizeof(*buffer) * size);
   if (buffer == NULL) {
+    free(array);
     exit(EXIT_FAILURE);
   }
 
@@ -66,7 +69,6 @@ int main(void) {
   mergeSort(array, buffer, 0, size - 1);
 
   for (int i = 0; i < size; i++) {
-    array[i] = buffer[i];
     printf(" %d", array[i]);
   }
 
