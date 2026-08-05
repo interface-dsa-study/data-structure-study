@@ -41,7 +41,7 @@ void mergeSort(int array[], int buffer[], int left, int right) {
 
   int middle = (left + right) / 2;
   mergeSort(array, buffer, left, middle);
-  mergeSort(array, buffer, middle, right);
+  mergeSort(array, buffer, middle + 1, right);
   merge(array, buffer, left, middle, right);
 }
 
