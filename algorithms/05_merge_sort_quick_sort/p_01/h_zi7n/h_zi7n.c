@@ -5,26 +5,25 @@ void merge(int array[], int buffer[], int left, int middle, int right) {
     int start = left;
     int start_two = middle + 1;
     int buffer_start_index = left;
-    while (start == middle && start_two == right) {
+    while (start <= middle && start_two <= right) {
         if (array[start] < array[start_two]) {
             buffer[buffer_start_index++] = array[start++];
         }
         else buffer[buffer_start_index++] = array[start_two++];
     }
-    if (start == middle) {
-        while (start_two != right) {
-            buffer[buffer_start_index++] = array[start_two++];
-        }
+    while (start <= middle) {
+        buffer[buffer_start_index++] = array[start++];
     }
-    else {
-        while (start != middle) {
-            buffer[buffer_start_index++] = array[start++];
-        }
+    while (start_two <= right) {
+        buffer[buffer_start_index++] = array[start_two++];
+    }
+    for (int i = start; i < right; i++) {
+        array[i] = buffer[i];
     }
 }
 
 void mergeSort(int array[], int buffer[], int left, int right) {
-    if (right < left) { // 종료조건
+    if (right == left) { // 종료조건
         return;
     }
     int middle = (left+right) / 2;
