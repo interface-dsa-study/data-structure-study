@@ -42,10 +42,7 @@ int main() {
         exit(1);
     }
     merge_sort(array,sorted_array,0,size);
-
-    for (int *pointer=sorted_array;pointer<sorted_array+size;pointer++) {
-        printf(" %d",*pointer);
-    }
+    for (int *pointer=sorted_array;pointer<sorted_array+size;pointer++) printf(" %d",*pointer);
     free(array);
     free(sorted_array);
     return 0;
