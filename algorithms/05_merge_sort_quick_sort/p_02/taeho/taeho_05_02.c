@@ -9,7 +9,7 @@ int find_pivot(int left,int right) {
     return rand()%(right-left)+left;
 }
 void quick_sort(int *array,int left,int right) {
-    if (left>=right) return;
+    if (left>=right-1) return;
     int pivot=find_pivot(left,right);
     swap(array+pivot,array+right-1);
     pivot=right-1;
