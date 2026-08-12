@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include <stdlib.h>
 int search(int *array,int left,int right,int k) {
+    if (array[left]>k)return -1;
     if (left>=right-1) {
         if (array[left]<=k) return left;
         return 0;

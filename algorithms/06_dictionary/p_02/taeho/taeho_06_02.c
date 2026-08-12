@@ -1,11 +1,12 @@
 #include<stdio.h>
 #include <stdlib.h>
 int search(int *array,int left,int right,int k) {
+    if (array[right-1]<k)return right;
     while (left<right-1) {
         int middle=(left+right)/2;
         if (array[middle]==k)return middle;
-        if (array[middle]>k) right=middle;
-        else left=middle;
+        if (array[middle]<k) left=middle;
+        else right=middle;
     }
     return left;
 }
