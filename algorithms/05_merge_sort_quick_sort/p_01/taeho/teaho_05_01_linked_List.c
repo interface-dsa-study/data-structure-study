@@ -40,62 +40,32 @@ List* merge(List *list1,  List *list2) {
         fprintf(stderr,"list malloc failed");
         exit(1);
     }
-
-    Node *sorted_list_pointer=NULL;//포인터 처음 부분 예외적으로 처리
-    if (list1->head_node->value<list2->head_node->value) {
-        sorted_list->head_node=pop(list1);
-        sorted_list_pointer=sorted_list->head_node;
-    }
-    else if (list1->head_node->value>list2->head_node->value) {
-        sorted_list->head_node=pop(list2);
-        sorted_list_pointer=sorted_list->head_node;
-    }
-    else if (list1->head_node->value==list2->head_node->value) {
-        sorted_list->size++;
-        sorted_list->head_node=pop(list1);
-        sorted_list_pointer=sorted_list->head_node;
-        sorted_list_pointer=sorted_list_pointer->next;
-        sorted_list_pointer=pop(list2);
-    }
+    Node *sorted_list_pointer=NULL;
     sorted_list->size++;
-    sorted_list_pointer->next=NULL;
-
+    Node *temp=list1->head_node->value<list2->head_node->value?pop(list1):pop(list2);
+    sorted_list->head_node=temp;
+    sorted_list_pointer=sorted_list->head_node;
     while (list1->size&&list2->size) {
-        if (list1->head_node->value<list2->head_node->value) {
-            sorted_list_pointer->next=pop(list1);
-        }
-        else if (list1->head_node->value>list2->head_node->value) {
-            sorted_list_pointer->next=pop(list2);
-        }
-        else if (list1->head_node->value==list2->head_node->value) {
-            sorted_list->size++;
-            sorted_list_pointer->next=pop(list1);
-            sorted_list_pointer=sorted_list_pointer->next;
-            sorted_list_pointer->next=pop(list2);
-        }
         sorted_list->size++;
+        temp=list1->head_node->value<list2->head_node->value?pop(list1):pop(list2);
+        sorted_list_pointer->next=temp;
         sorted_list_pointer=sorted_list_pointer->next;
         sorted_list_pointer->next=NULL;
     }
-    while (list1->size){
-        sorted_list->size++;
-        sorted_list_pointer->next=pop(list1);
-        sorted_list_pointer=sorted_list_pointer->next;
-        sorted_list_pointer->next=NULL;
+    if (list1->size){
+        sorted_list->size+=list1->size;
+        sorted_list_pointer->next=list1->head_node;
     }
-    while (list2->size){
-        sorted_list->size++;
-        sorted_list_pointer->next=pop(list2);
-        sorted_list_pointer=sorted_list_pointer->next;
-        sorted_list_pointer->next=NULL;
+    else {
+        sorted_list->size+=list2->size;
+        sorted_list_pointer->next=list2->head_node;
     }
+    free(list1);
+    free(list2);
     return sorted_list;
 }
-Node* move_time(Node *node, int time) {
-    for (int i=0;i<time;i++) {
-        if (node->next) node=node->next;
-        else break;
-    }
+Node* move_time(Node *node, int times) {
+    for (int i=0;i<times&&node->next;i++) node=node->next;
     return node;
 }
 List*  merge_sort(List *list) {
@@ -138,5 +108,6 @@ int main() {
     list=merge_sort(list);
     print_list(list);
     free_node(list->head_node);
+    free(list);
     return 0;
 }
