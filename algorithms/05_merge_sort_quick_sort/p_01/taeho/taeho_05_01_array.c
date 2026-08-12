@@ -18,7 +18,7 @@ void merge(int* array,int *sorted_array,int left,int middle,int right) {
     sorted_pointer=sorted_array;
     while (array_pointer<array+right) *array_pointer++=*sorted_pointer++;
 }
-void merge_sort(int *array,int *sorted_array,int left,int right) {//여기서 재귀를 써야 하는데...
+void merge_sort(int *array,int *sorted_array,int left,int right) {
     if (left+1>=right) {
         return;
     }
