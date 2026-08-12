@@ -8,7 +8,9 @@ typedef struct list {
     int size;
     Node *head_node;
 }List;
-Node* create_node(int value) {
+Node* create_node() {
+    int value;
+    scanf("%d",&value);
     Node *new_node=malloc(sizeof(*new_node));
     if (!new_node) {
         fprintf(stderr,"node malloc failed");
@@ -96,13 +98,10 @@ int main() {
     setbuf(stdout,NULL);
     List *list=create_list(0,NULL);
     scanf("%d",&list->size);
-    int value;
-    scanf("%d",&value);
-    list->head_node=create_node(value);
+    list->head_node=create_node();
     Node *pointer=list->head_node;
     for (int i=1;i<list->size;i++) {
-        scanf("%d",&value);
-        pointer->next=create_node(value);
+        pointer->next=create_node();
         pointer=pointer->next;
     }
     list=merge_sort(list);
