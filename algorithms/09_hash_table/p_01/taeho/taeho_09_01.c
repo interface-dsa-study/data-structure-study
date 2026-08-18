@@ -45,6 +45,17 @@ int search_remove(Node **bucket,int key,int s_or_r) {
     }
     return 0;
 }
+void free_bucket(Node **bucket) {
+    for (Node **bucket_pointer=bucket;bucket_pointer<bucket+m;bucket_pointer++) {
+        Node *node=*bucket_pointer;
+        while (node) {
+            Node *target=node;
+            node=node->next;
+            free(target);
+        }
+    }
+    free(bucket);
+}
 int main() {
     scanf("%d",&m);
     Node **bucket=calloc(m,sizeof(*bucket));
@@ -71,4 +82,6 @@ int main() {
         }
         if (input=='e') break;
     }
+    free_bucket(bucket);
+    return 0;
 }
