@@ -1,15 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 int m;
+int q;
 int hash(int key) {
     return key%m;
+}
+int second_hash(int key) {
+    return q-(key%q);
+}
+int double_hash(int key,int collision_time) {
+    return (hash(key)+collision_time*second_hash(key));
 }
 void insert_item(int *bucket,int key) {
     int index=hash(key);
     int i=0;
     for (;i<m&&bucket[index];i++) {
-        index++;
-        if (index==m)index=0;
+        index=double_hash(key,i);
+        if (index<0||m<=index)index=(m+index)%m;
     }
     if (i==m)printf("-1");
     else {
@@ -22,18 +29,21 @@ void search(int *bucket,int key) {
     int index=hash(key);
     int i=0;
     for (;i<m&&bucket[index]!=key;i++) {
-        index++;
-        if (index==m)index=0;
+        index=double_hash(key,i);
+        if (index<0||m<=index)index=(m+index)%m;
     }
     if (i==m)printf("-1");
     else {
         printf("%d %d",index,key);
     }
 }
+void print(int *bucket) {
+    for (int *pointer=bucket;pointer<bucket+m;pointer++)printf(" %d",*pointer);
+}
 int main() {
     setbuf(stdout,NULL);
     int n;
-    scanf("%d %d",&m,&n);
+    scanf("%d %d %d",&m,&n,&q);
     int *bucket=calloc(m,sizeof(*bucket));
     int time=n;
     while (1) {
@@ -50,8 +60,14 @@ int main() {
                 scanf("%d",&key);
                 search(bucket,key);
                 break;
+            case 'p':
+                print(bucket);
+                break;
         }
-        if (input=='e')break;
+        if (input=='e') {
+            print(bucket);
+            break;
+        }
         printf("\n");
     }
     free(bucket);
