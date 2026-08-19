@@ -20,7 +20,7 @@ Node* create_node(Node *parent,int height,int key) {
     node->right_child=NULL;
     return node;
 }
-Node* search(Node *loot_node,int key) {
+Node* tree_search(Node *loot_node,int key) {
     Node *node=loot_node;
     while(1) {
         if (node->key<key&&node->right_child)node=node->right_child;
@@ -30,7 +30,22 @@ Node* search(Node *loot_node,int key) {
     return node;
 }
 void restruct(Node *x,Node *y,Node *z) {
-    if (x->left_child==y)
+    if (z->left_child==y) {
+        if (y->left_child==x) {
+
+        }
+        else {
+
+        }
+    }
+    else {
+        if (y->right_child==x) {
+
+        }
+        else {
+
+        }
+    }
 }
 int update_height(Node *node) {
     if (!node->left_child&&!node->right_child) node->height=1;
@@ -43,8 +58,14 @@ int update_height(Node *node) {
     }
     return node->height;
 }
-int is_balanced(Node *loot_node) {
-
+int abs(int value) {
+    return value<0?value*-1:value;
+}
+int is_balanced(Node *node) {
+    if (node->left_child&&node->right_child) {
+        if (abs(node->left_child->height-node->right_child->height)>1)return 0;
+    }
+    return 1;
 }
 void search_and_fix(Node *loot_node) {
     update_height(loot_node);
@@ -55,7 +76,7 @@ void insert_item(Node *loot_node,int key) {
         loot_node->key=key;
     }
     else {
-        Node *node=search(loot_node,key);
+        Node *node=tree_search(loot_node,key);
         if (node->key<key&&!node->right_child)node->right_child=create_node(node,1,key);
         else if (node->key>key&&!node->left_child)node->left_child=create_node(node,1,key);
         else printf("insert failed");
@@ -89,7 +110,7 @@ int main() {
                 break;
             case 's':
                 scanf("%d",&key);
-                int search_result=search(loot_node,key)->key;
+                int search_result=tree_search(loot_node,key)->key;
                 if (search_result==key) printf("%d",key);
                 else printf("X");
                 break;
