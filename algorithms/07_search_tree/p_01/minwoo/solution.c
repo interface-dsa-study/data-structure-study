@@ -66,11 +66,12 @@ TreeNode* TreeSearch(TreeNode* root, int k) {
     if (root->key == k) {
         return root;
     }
-    TreeNode* findnode = TreeSearch(root->lChild, k);
-    if (findnode) {
-        return findnode;
+    if (root->key < k) {
+        return TreeSearch(root->rChild, k);
     }
-    return TreeSearch(root->rChild, k);
+    if (root->key > k) {
+        return TreeSearch(root->lChild, k);
+    }
 }
 
 bool isExternal(TreeNode* root) {
@@ -88,24 +89,30 @@ TreeNode* inOrderSucc(TreeNode* node) {
     return node;
 }
 
-void removeElement(TreeNode* root, int k) {
+int removeElement(TreeNode* root, int k) {
     TreeNode* findnode = TreeSearch(root, k);
     if (findnode == NULL) {
         printf("X\n");
-        return;
+        return 0;
     }
     else {
         printf("%d\n", findnode->key);
         if (isExternal(findnode)) {
-            if (findnode->rChild == NULL && findnode->lChild == NULL) {
-                if (findnode->parent->lChild == findnode) {
-                    findnode->parent->lChild = NULL;
+            if (findnode->rChild == NULL && findnode->lChild == NULL) {//자식이 없을 때
+                if (findnode->parent == NULL) {
+                    free(findnode);
+                    findnode = NULL;
                 }
                 else {
-                    findnode->parent->rChild = NULL;
+                    if (findnode->parent->lChild == findnode) {
+                        findnode->parent->lChild = NULL;
+                    }
+                    else {
+                        findnode->parent->rChild = NULL;
+                    }
                 }
             }
-            else {
+            else { // 자식이
                 TreeNode* successor = findnode->lChild == NULL ? findnode->rChild : findnode->lChild;
                 if (findnode->parent->lChild == findnode) { //부모가 루트일 때 고려해야 함
                     findnode->parent->lChild = successor;
@@ -162,12 +169,11 @@ int main() {
         }
         else if (ch == 's') {
             scanf("%d", &key);
-            int findkey = findElement(BST, key);
-            if (findkey) {
-                printf("%d\n", findkey);
+            if (TreeSearch(BST, key)) {
+                printf("%d\n", key);
             }
             else {
-                printf("X");
+                printf("X\n");
             }
         }
         else {
