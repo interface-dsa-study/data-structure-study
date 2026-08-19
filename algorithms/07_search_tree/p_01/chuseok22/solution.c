@@ -58,20 +58,6 @@ Node *treeSearch(Node *node, int key) {
   return treeSearch(node->right_child, key);
 }
 
-Node *findNodeByPreorderTraversal(Node *node, int key) {
-  if (node == NULL) {
-    return NULL;
-  }
-
-  if (node->key == key) {
-    return node;
-  }
-
-  findNodeByPreorderTraversal(node->left_child, key);
-  findNodeByPreorderTraversal(node->right_child, key);
-  return NULL;
-}
-
 int findElement(Node *node, int key) {
   Node *target_node = treeSearch(node, key);
   if (target_node == NULL) {
@@ -100,6 +86,10 @@ Node *findSiblingNode(Node *node) {
 }
 
 Node *reduceExternal(BinarySearchTree *tree, Node *externalNode) {
+  // 삭제하기로 결정된 노드 주변의 트리 연결 구조 정리
+  // 1. 삭제대상 노드가 root 인경우
+  // 2. 삭제 대상 노드에 자식이 없는경우
+  // 3. 삭제 대상 노드
 }
 
 int removeElement(BinarySearchTree *tree, int key) {
