@@ -25,8 +25,8 @@ void print(Node *node) {
         if (node->right_child)print(node->right_child);
     }
 }
-Node* tree_search(Node *loot_node,int key) {
-    Node *node=loot_node;
+Node* tree_search(Node *root_node,int key) {
+    Node *node=root_node;
     while (node) {
         if (node->key<key&&node->right_child) node=node->right_child;
         else if (node->key>key&&node->left_child) node=node->left_child;
@@ -34,10 +34,10 @@ Node* tree_search(Node *loot_node,int key) {
     }
     return node;
 }
-void insert_item(Node *loot_node,int key) {
-    if (!loot_node->key) loot_node->key=key;
+void insert_item(Node *root_node,int key) {
+    if (!root_node->key) root_node->key=key;
     else {
-        Node *node=tree_search(loot_node,key);
+        Node *node=tree_search(root_node,key);
         if (node->key>key&&!node->left_child)node->left_child=create_node(node,key);
         else if (node->key<key&&!node->right_child)node->right_child=create_node(node,key);
         else printf("insert failed");
@@ -53,12 +53,12 @@ int search_next(Node *node,int key) {//중위순회-> 키보다 큰 최소키 �
     }
     return 0;
 }
-int remove_element(Node *loot_node,int key) {
-    Node *target=tree_search(loot_node,key);
+int remove_element(Node *root_node,int key) {
+    Node *target=tree_search(root_node,key);
     if (target->key==key) {
         int target_key=target->key;
         if (!target->left_child&&!target->right_child) {//자녀 0개
-            if (target==loot_node) target->key=0;
+            if (target==root_node) target->key=0;
             else {
                 if (target->parent->left_child==target) target->parent->left_child=NULL;//부모 노드 자식 연결 수정
                 else target->parent->right_child=NULL;
@@ -67,16 +67,16 @@ int remove_element(Node *loot_node,int key) {
         }
         else if (target->left_child&&!target->right_child||target->right_child&&!target->left_child) {//자녀 1개
             Node *child=target->left_child?target->left_child:target->right_child;
-            if (target==loot_node) {
+            if (target==root_node) {
                 if (child->left_child) {//자식 노드의 자식 노드들 연결
-                    loot_node->left_child=child->left_child;
-                    child->left_child->parent=loot_node;
+                    root_node->left_child=child->left_child;
+                    child->left_child->parent=root_node;
                 }
                 if (child->right_child) {
-                    loot_node->right_child=child->right_child;
-                    child->right_child->parent=loot_node;
+                    root_node->right_child=child->right_child;
+                    child->right_child->parent=root_node;
                 }
-                loot_node->key=child->key;// 키 연결(루트에 자식 노드를 덮어씌우는 느낌)
+                root_node->key=child->key;// 키 연결(루트에 자식 노드를 덮어씌우는 느낌)
                 free(child);
             }
             else {
@@ -87,7 +87,7 @@ int remove_element(Node *loot_node,int key) {
             }
         }
         else if (target->right_child&&target->left_child) {//자녀 2개
-            target->key=remove_element(loot_node,search_next(loot_node,key));
+            target->key=remove_element(root_node,search_next(root_node,key));
         }
         return target_key;
     }
@@ -102,7 +102,7 @@ void free_node(Node *node) {
 }
 int main() {
     setbuf(stdout,NULL);
-    Node *loot_node=create_node(NULL,0);
+    Node *root_node=create_node(NULL,0);
     while (1) {
         char input;
         int key;
@@ -110,27 +110,27 @@ int main() {
         switch (input) {
             case 'i':
                 scanf("%d",&key);
-                insert_item(loot_node,key);
+                insert_item(root_node,key);
                 break;
             case 's':
                 scanf("%d",&key);
-                int search_result=tree_search(loot_node,key)->key;
+                int search_result=tree_search(root_node,key)->key;
                 if (search_result==key) printf("%d",key);
                 else printf("X");
                 break;
             case 'd':
                 scanf("%d",&key);
-                int remove_result=remove_element(loot_node,key);
+                int remove_result=remove_element(root_node,key);
                 if (remove_result==key) printf("%d",key);
                 else printf("X");
                 break;
             case 'p':
-                print(loot_node);
+                print(root_node);
                 break;
         }
         if (input=='q')break;
         printf("\n");
     }
-    free_node(loot_node);
+    free_node(root_node);
     return 0;
 }

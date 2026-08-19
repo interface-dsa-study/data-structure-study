@@ -20,8 +20,8 @@ Node* create_node(Node *parent,int height,int key) {
     node->right_child=NULL;
     return node;
 }
-Node* tree_search(Node *loot_node,int key) {
-    Node *node=loot_node;
+Node* tree_search(Node *root_node,int key) {
+    Node *node=root_node;
     while(1) {
         if (node->key<key&&node->right_child)node=node->right_child;
         else if (node->key>key&&node->left_child)node=node->left_child;
@@ -67,16 +67,16 @@ int is_balanced(Node *node) {
     }
     return 1;
 }
-void search_and_fix(Node *loot_node) {
-    update_height(loot_node);
+void search_and_fix(Node *root_node) {
+    update_height(root_node);
 }
-void insert_item(Node *loot_node,int key) {
-    if (!loot_node->key) {
-        loot_node->height=1;
-        loot_node->key=key;
+void insert_item(Node *root_node,int key) {
+    if (!root_node->key) {
+        root_node->height=1;
+        root_node->key=key;
     }
     else {
-        Node *node=tree_search(loot_node,key);
+        Node *node=tree_search(root_node,key);
         if (node->key<key&&!node->right_child)node->right_child=create_node(node,1,key);
         else if (node->key>key&&!node->left_child)node->left_child=create_node(node,1,key);
         else printf("insert failed");
@@ -98,7 +98,7 @@ void free_node(Node *node) {
 }
 int main() {
     setbuf(stdout,NULL);
-    Node *loot_node=create_node(NULL,0,0);
+    Node *root_node=create_node(NULL,0,0);
     while (1) {
         char input;
         int key;
@@ -106,19 +106,19 @@ int main() {
         switch (input) {
             case 'i':
                 scanf("%d",&key);
-                insert_item(loot_node,key);
+                insert_item(root_node,key);
                 break;
             case 's':
                 scanf("%d",&key);
-                int search_result=tree_search(loot_node,key)->key;
+                int search_result=tree_search(root_node,key)->key;
                 if (search_result==key) printf("%d",key);
                 else printf("X");
                 break;
             case 'p':
-                print(loot_node);
+                print(root_node);
                 break;
         }
         if (input=='q')break;
     }
-    free_node(loot_node);
+    free_node(root_node);
 }

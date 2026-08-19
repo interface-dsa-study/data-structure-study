@@ -6,12 +6,20 @@ typedef struct node {
     struct node *left_child;
     struct node *right_child;
 }Node;
+typedef struct tree {
+    Node *root;
+}Tree;
 Node* create_external_node(Node *parent) {
     Node *new_node=malloc(sizeof(*new_node));
+    if (!new_node) {
+        fprintf(stderr,"node malloc failed");
+        exit(1);
+    }
     new_node->parent=parent;
     new_node->key=0;
     new_node->left_child=NULL;
     new_node->right_child=NULL;
+    return new_node;
 }
 Node* create_internal_node(Node *parent,int key) {
     Node *new_node=malloc(sizeof(*new_node));
@@ -25,24 +33,30 @@ Node* create_internal_node(Node *parent,int key) {
     new_node->right_child=create_external_node(new_node);
     return new_node;
 }
+int is_external(Node *node) {
+    return !node->left_child&&!node->right_child;
+}
+int is_internal(Node *node) {
+    return !is_external(node);
+}
 void print(Node *node) {
-    if (node&&node->key) {
+    if (is_internal(node)) {
         printf(" %d",node->key);
-        if (node->left_child)print(node->left_child);
-        if (node->right_child)print(node->right_child);
+        print(node->left_child);
+        print(node->right_child);
     }
 }
-Node* tree_search(Node *loot_node,int key) {
-    Node *node=loot_node;
-    while (node->key) {
-        if (node->key<key&&node->right_child) node=node->right_child;
-        else if (node->key>key&&node->left_child) node=node->left_child;
-        else break;
+Node* tree_search(Tree *tree,int key) {
+    Node *node=tree->root;
+    while (is_internal(node)) {
+        if (node->key<key) node=node->right_child;
+        else if (node->key>key) node=node->left_child;
+        else return node;
     }
     return node;
 }
-int find_element(Node *loot_node,int key) {
-    Node *node=loot_node;
+int find_element(Tree *tree,int key) {
+    Node *node=tree->root;
     while (node&&node->key) {
         if (node->key<key&&node->right_child) node=node->right_child;
         else if (node->key>key&&node->left_child) node=node->left_child;
@@ -50,85 +64,92 @@ int find_element(Node *loot_node,int key) {
     }
     return node->key;
 }
-int is_external(Node *node) {
-    return node->key;
+void insert_item(Tree *tree,int key) {
+    Node *node=tree_search(tree,key);
+    if (is_internal(node)) {
+        printf("node already exists");
+        return;
+    }
+    Node *new_node=create_internal_node(node->parent,key);
+    if (!node->parent) tree->root=new_node;
+    else if (new_node->parent->key>key)new_node->parent->left_child=new_node;
+    else new_node->parent->right_child=new_node;
+    free(node);
 }
-int is_internal(Node *node) {
-    return !node->key;
+Node* in_order_successor(Node *node) {//중위순회-> 키보다 큰 최소키 반환, 노드는 자식이 둘-> 오른쪽 자식 무조건 존재
+    node=node->right_child;
+    while (is_internal(node->left_child)) {
+        node=node->left_child;
+    }
+    return node;
 }
-void insert_item(Node *loot_node,int key) {
-    if (is_external(loot_node)) {
-        Node *target=loot_node;
-        loot_node=create_internal_node(NULL,key);
-        free(target);
+void free_node(Node *node) {
+    if (is_external(node->left_child)&&is_external(node->right_child)){
+        free(node->left_child);
+        free(node->right_child);
+        free(node);
     }
     else {
-        Node *node=tree_search(loot_node,key);
-        if (node->key>key&&is_external(node->left_child))node->left_child=create_internal_node(node,key);
-        else if (node->key<key&&is_external(node->right_child))node->right_child=create_internal_node(node,key);
-        else printf("insert failed");
+        printf("free_node() failed");
     }
 }
-int search_next(Node *node,int key) {//중위순회-> 키보다 큰 최소키 반환
-    if (node) {
-        int left=search_next(node->left_child,key);
-        int right=search_next(node->right_child,key);
-        if (left>key)return left;
-        if (node->key>key)return node->key;
-        if (right>key) return right;
-    }
-    return 0;
-}
-int remove_element(Node *loot_node,int key) {
-    Node *target=tree_search(loot_node,key);
+int remove_element(Tree *tree,int key) {
+    Node *target=tree_search(tree,key);
     if (target->key==key) {
         int target_key=target->key;
         if (is_external(target->left_child)&&is_external(target->right_child)) {//자녀 0개
-            if (target==loot_node) target->key=0;
-            else {
-                if (target->parent->left_child==target) target->parent->left_child=NULL;//부모 노드 자식 연결 수정
-                else target->parent->right_child=NULL;
-                free(target);
+            if (target==tree->root) {
+                tree->root=create_external_node(NULL);
             }
+            else {
+                if (target->parent->key>key) target->parent->left_child=create_external_node(target->parent);//부모 노드 자식 연결 수정
+                else target->parent->right_child=create_external_node(target->parent);
+            }
+            free_node(target);
         }
         else if ((is_internal(target->left_child)&&is_external(target->right_child))||(is_internal(target->right_child)&&is_external(target->left_child))) {//자녀 1개
             Node *child=target->left_child?target->left_child:target->right_child;
-            if (target==loot_node) {
-                if (child->left_child) {//자식 노드의 자식 노드들 연결
-                    loot_node->left_child=child->left_child;
-                    child->left_child->parent=loot_node;
-                }
-                if (child->right_child) {
-                    loot_node->right_child=child->right_child;
-                    child->right_child->parent=loot_node;
-                }
-                loot_node->key=child->key;// 키 연결(루트에 자식 노드를 덮어씌우는 느낌)
-                free(child);
+            if (target==tree->root) {
+                tree->root=child;
+                child->parent=NULL;
             }
             else {
-                if (target->parent->left_child==target) target->parent->left_child=child;//부모 노드 자식 연결 수정
+                if (target->parent->key>key) target->parent->left_child=child;//부모 노드 자식 연결 수정
                 else target->parent->right_child=child;
                 child->parent=target->parent;
-                free(target);
             }
+            free_node(target);
         }
-        else if (is_internal(target->right_child)&&is_internal(target->left_child)) {//자녀 2개
-            target->key=remove_element(loot_node,search_next(loot_node,key));
+        else if (is_internal(target->right_child)&&is_internal(target->left_child)) { //자녀 2개
+            Node *successor=in_order_successor(target);
+            free(successor->left_child);//계승자->왼쪽 자식 없음(외부노드)-> 삭제
+            successor->parent->left_child=successor->right_child;//계승자: 부모 노드의 왼쪽노드임-> 부모 노드와 계승자의 오른쪽 노드와 연결(오른쪽은 외부여도 무관)
+            successor->right_child->parent=successor->parent;
+            if (target==tree->root) successor->parent=NULL;//타겟이 루트면 타겟 부모 연결 X
+            else {//타겟이 루트가 아니므로 타겟 부모 연결 필요
+                successor->parent=target->parent;
+                if (target->parent->key>key)target->parent->left_child=successor;
+                else target->parent->right_child=successor;
+            }
+            successor->left_child=target->left_child;//계승자와 타겟 자식들 연결
+            successor->right_child=target->right_child;
+            free(target);
         }
         return target_key;
     }
     return 0;
 }
-void free_node(Node *node) {
+void free_all_node(Node *node) {
     if (node) {
-        free_node(node->left_child);
-        free_node(node->right_child);
+        free_all_node(node->left_child);
+        free_all_node(node->right_child);
         free(node);
     }
 }
 int main() {
     setbuf(stdout,NULL);
-    Node *loot_node=create_external_node(NULL);
+    Tree *tree=malloc(sizeof(*tree));
+    tree->root=create_external_node(NULL);
     while (1) {
         char input;
         int key;
@@ -136,27 +157,27 @@ int main() {
         switch (input) {
             case 'i':
                 scanf("%d",&key);
-                insert_item(loot_node,key);
+                insert_item(tree,key);
                 break;
             case 's':
                 scanf("%d",&key);
-                int search_result=find_element(loot_node,key);
+                int search_result=find_element(tree,key);
                 if (search_result==key) printf("%d",key);
                 else printf("X");
                 break;
             case 'd':
                 scanf("%d",&key);
-                int remove_result=remove_element(loot_node,key);
+                int remove_result=remove_element(tree,key);
                 if (remove_result==key) printf("%d",key);
                 else printf("X");
                 break;
             case 'p':
-                print(loot_node);
+                print(tree->root);
                 break;
         }
         if (input=='q')break;
         printf("\n");
     }
-    free_node(loot_node);
+    free_all_node(tree->root);
     return 0;
 }
