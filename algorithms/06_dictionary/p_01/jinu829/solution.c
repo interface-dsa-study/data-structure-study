@@ -29,5 +29,6 @@ int main(){
         scanf("%d", &arr[i]);
     }
     printf(" %d", binarySearch(k, arr, 0, n-1));
+    free(arr);
     return 0;
 }

@@ -10,15 +10,16 @@ int main(){
     while (attempt > 0){
         mid = (a + b)/2;
         scanf(" %c", &answer);
-        printf("%c\n", answer);
-        if (answer == 'N'){
+        //printf("%c\n", answer);
+        if (answer == 'Y'){
             a = mid + 1;
         }
-        else if (answer == 'Y'){
+        else if (answer == 'N'){
             b = mid;
         }
         attempt -= 1;
     }
+    mid = (a + b)/2;
     printf("%d", mid);
     return 0;
 }

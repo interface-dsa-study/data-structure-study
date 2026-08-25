@@ -31,5 +31,6 @@ int main(){
         resultindex = first;
     }
     printf(" %d", resultindex);
+    free(arr);
     return 0;
 }
