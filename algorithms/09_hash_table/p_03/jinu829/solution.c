@@ -74,7 +74,11 @@ int main(){
             else
                 printf("%d\n", -1);
         }
+        else if (input == 'p'){
+            print(arr, M);
+        }
         else if (input == 'e'){
+            print(arr, M);
             break;
         }
     }
