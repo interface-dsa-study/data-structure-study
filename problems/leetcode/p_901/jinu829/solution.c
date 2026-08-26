@@ -1,49 +1,41 @@
-#include<stdio.h>
-#include<stdlib.h>
 
-#define MAX_STACK_SIZE 10^4
-
-typedef struct Stack{
-    int price;
-    int span;
-}Stack;
 
 typedef struct
 {
-    Stack stack[MAX_STACK_SIZE];
-    int top_index;
+    int A[10 ^ 4]; // 그 전에 가지고 있던 최대 값의 인덱스값
+    int x[10 ^ 4]; // 그 전에 가지고 있던 최대 값
+    int n;         // 인덱스값
+    int nx;        // X, I배열의 인덱스값.
 } StockSpanner;
 
 StockSpanner *stockSpannerCreate()
 {
-    StockSpanner *obj;
-    obj = (StockSpanner *)malloc(sizeof(StockSpanner));
-
-    if (obj == NULL){
-        printf("StockSpanner did not defined!");
-        return NULL;
-    }
-    obj->top_index = -1;
-    return obj;
+    StockSpanner s;
+    s.n = -1;
+    s.nx = -1;
+    return &s;
 }
 
 int stockSpannerNext(StockSpanner *obj, int price)
 { // 기간을 반환하는 함수
-    int totalspan = 1;
-    while (obj->top_index >= 0 && obj->stack[obj->top_index].price <= price){
-        totalspan += obj->stack[obj->top_index].span;
-        obj->top_index -= 1;
-    }
-    obj->top_index += 1;
-    obj->stack[obj->top_index].price = price;
-    obj->stack[obj->top_index].span = totalspan;
-
-    return totalspan;
+    while (obj->x[obj->nx] < price && obj->nx >= 0)
+        {
+            obj->nx = obj->nx - 1;
+        }
+        if (obj->nx == 0)
+        {
+            obj->n += 1;
+            return obj->n;
+        }
+        else
+        {
+            return obj.
+        }
+    
 }
 
 void stockSpannerFree(StockSpanner *obj)
 { // 공간 해제
-    free(obj);
 }
 
 /**

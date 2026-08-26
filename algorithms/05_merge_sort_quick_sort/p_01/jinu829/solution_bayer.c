@@ -3,7 +3,7 @@
 
 void merge(int *arr, int *arrcopy, int start, int mid, int end)
 {
-    printf("%d %d %d\n", start, mid, end);
+    // printf("%d %d %d\n", start, mid, end);
     int i = start;
     int j = mid + 1;
     int count = start;
@@ -43,11 +43,11 @@ void merge(int *arr, int *arrcopy, int start, int mid, int end)
     {
         arr[i] = arrcopy[i];
     }
-    for (int i = start; i <= end; i++)
+    /*for (int i = start; i <= end; i++)
     {
         printf(" %d", arr[i]);
     }
-    printf("\n");
+    printf("\n");*/
     return;
 }
 
@@ -72,13 +72,13 @@ int main()
     int *arrcopy;
 
     scanf("%d", &n);
-    arr = (int *)malloc(sizeof(int));
-    arrcopy = (int *)malloc(sizeof(int));
+    arr = (int *)malloc(sizeof(int) * n);
+    arrcopy = (int *)malloc(sizeof(int) * n);
 
     for (int i = 0; i < n; i++)
     {
         scanf("%d", &arr[i]);
-        printf("%d\n", arr[i]);
+        // printf("%d\n", arr[i]);
     }
 
     mergeSort(arr, arrcopy, 0, n - 1);

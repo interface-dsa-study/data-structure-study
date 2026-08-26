@@ -7,6 +7,7 @@ typedef struct Node
     struct Node *leftChild;
     struct Node *rightChild;
     int key;
+    int height;
 } Node;
 
 void create_external_node(Node *parent)
