@@ -6,10 +6,10 @@ int search(int *array,int left,int right,int k) {
         if (array[left]<=k) return left;
         return 0;
     }
-    int middle=(left+right)/2;
+    int middle=(left+right+1)/2;
     int left_result=search(array,left,middle,k);
     int right_result=search(array,middle,right,k);
-    if (right_result!=0) return right_result;
+    if (right_result>0) return right_result;
     else return left_result;
 }
 int main() {
