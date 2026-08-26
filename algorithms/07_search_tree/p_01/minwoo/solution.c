@@ -89,8 +89,8 @@ TreeNode* inOrderSucc(TreeNode* node) {
     return node;
 }
 
-int removeElement(TreeNode* root, int k) {
-    TreeNode* findnode = TreeSearch(root, k);
+int removeElement(TreeNode** root, int k) {
+    TreeNode* findnode = TreeSearch(*root, k);
     if (findnode == NULL) {
         printf("X\n");
         return 0;
@@ -99,7 +99,7 @@ int removeElement(TreeNode* root, int k) {
         printf("%d\n", findnode->key);
         if (isExternal(findnode)) {
             if (findnode->rChild == NULL && findnode->lChild == NULL) {//자식이 없을 때
-                if (findnode->parent == NULL) {
+                if (findnode == *root) { //루트일 때
                     free(findnode);
                     findnode = NULL;
                 }
@@ -112,31 +112,41 @@ int removeElement(TreeNode* root, int k) {
                     }
                 }
             }
-            else { // 자식이
+            else { // 자식이 1
                 TreeNode* successor = findnode->lChild == NULL ? findnode->rChild : findnode->lChild;
-                if (findnode->parent->lChild == findnode) { //부모가 루트일 때 고려해야 함
-                    findnode->parent->lChild = successor;
-                    successor->parent = findnode->parent;
+                if (findnode->parent == *root) { //루트일 때
+                    successor->parent = NULL;
+                    *root = successor;
+                    free(successor);
                 }
                 else {
-                    findnode->parent->rChild = successor;
-                    successor->parent = findnode->parent;
+                    if (findnode->parent->lChild == findnode) {
+                        findnode->parent->lChild = successor;
+                        successor->parent = findnode->parent;
+                    }
+                    else {
+                        findnode->parent->rChild = successor;
+                        successor->parent = findnode->parent;
+                    }
                 }
             }
-            free(findnode);
-            findnode = NULL;
         }
-        else {
+        else { //자식이 2
             TreeNode* successor = inOrderSucc(findnode);
+            if (successor != findnode->rChild) {
+                successor->parent->lChild = successor->rChild;
+                successor->rChild = findnode->rChild;
+            }
             printf("|%d %d|", findnode->key, successor->key);
             if (successor->rChild != NULL) {
-                successor->parent->lChild = successor->rChild;
                 successor->rChild->parent = successor->parent;
             }
-            findnode->key = successor->key;
-            free(successor);
-            successor = NULL;
+            successor->lChild = findnode->lChild;
+            successor->parent = findnode->parent;
+            findnode = successor;
         }
+        free(findnode);
+        findnode = NULL;
     }
 }
 
@@ -165,7 +175,7 @@ int main() {
         }
         else if (ch == 'd') {
             scanf("%d", &key);
-            removeElement(BST, key);
+            removeElement(&BST, key);
         }
         else if (ch == 's') {
             scanf("%d", &key);
