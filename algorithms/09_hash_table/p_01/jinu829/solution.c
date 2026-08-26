@@ -19,34 +19,41 @@ void insertItem(int key, Node *arr, int M){
     int v = key % M;
     insert_node->next = arr[v].next;
     arr[v].next = insert_node;
-    printf("%d\n", arr[v].next->key);
+    //printf("%d\n", arr[v].next->key);
 }
 
-int deleteItem(int key, Node *arr, int M){
+int deleteItem(int key, Node *arr, int M) {
     int v = key % M;
-    Node *delete_Node = arr[v].next;
-    if (delete_Node->key == key){
-        arr[v].next = delete_Node->next;
-        free(delete_Node);
-        return 1;
-    }
-    while (delete_Node->next != NULL){
-        if (delete_Node->next->key == key){
-            delete_Node->next = delete_Node->next->next;
-            free(delete_Node->next);
-            return 1;
+    int count = 1;
+    Node *curr = arr[v].next;
+    Node *prev = NULL;
+
+    while (curr != NULL) {
+        if (curr->key == key) {
+            if (prev == NULL) {
+                arr[v].next = curr->next;
+            } else {
+                prev->next = curr->next;
+            }
+            free(curr);
+            return count;
         }
+        prev = curr;
+        curr = curr->next;
+        count++;
     }
     return 0;
 }
 
 int findElement(int k, Node *arr, int M){
     int v = k % M;
+    int count = 1;
     Node *search_Node = arr[v].next;
-    while (search_Node->next != NULL){
+    while (search_Node != NULL){
         if (search_Node->key == k)
-            return 1;
+            return count;
         search_Node = search_Node->next;
+        count++;
     }
     return 0;
 }
@@ -55,7 +62,7 @@ void print(Node *arr, int M){
     Node *print_Node;
     for (int i = 0; i < M; i++){
         print_Node = arr[i].next;
-        while (print_Node->next != NULL){
+        while (print_Node != NULL){
             printf(" %d", print_Node->key);
             print_Node = print_Node->next;
         }
@@ -80,10 +87,12 @@ int main(){
             insertItem(key, arr, M);
         }
         else if (input == 's'){
+            scanf("%d", &key);
             printf("%d\n", findElement(key, arr, M));
         }
         else if (input == 'd'){
-            printf("%d", deleteItem(key, arr, M));
+            scanf("%d", &key);
+            printf("%d\n", deleteItem(key, arr, M));
         }
         else if (input == 'p'){
             print(arr, M);
