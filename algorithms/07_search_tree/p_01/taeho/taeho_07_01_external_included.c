@@ -12,7 +12,7 @@ typedef struct tree {
 Node* create_external_node(Node *parent) {
     Node *new_node=malloc(sizeof(*new_node));
     if (!new_node) {
-        fprintf(stderr,"node malloc failed");
+        printf("node malloc failed");
         exit(1);
     }
     new_node->parent=parent;
@@ -24,7 +24,7 @@ Node* create_external_node(Node *parent) {
 Node* create_internal_node(Node *parent,int key) {
     Node *new_node=malloc(sizeof(*new_node));
     if (!new_node) {
-        fprintf(stderr,"node malloc failed");
+        printf("node malloc failed");
         exit(1);
     }
     new_node->parent=parent;
@@ -39,13 +39,6 @@ int is_external(Node *node) {
 int is_internal(Node *node) {
     return !is_external(node);
 }
-void print(Node *node) {
-    if (is_internal(node)) {
-        printf(" %d",node->key);
-        print(node->left_child);
-        print(node->right_child);
-    }
-}
 Node* tree_search(Tree *tree,int key) {
     Node *node=tree->root;
     while (is_internal(node)) {
@@ -56,12 +49,8 @@ Node* tree_search(Tree *tree,int key) {
     return node;
 }
 int find_element(Tree *tree,int key) {
-    Node *node=tree->root;
-    while (node&&node->key) {
-        if (node->key<key&&node->right_child) node=node->right_child;
-        else if (node->key>key&&node->left_child) node=node->left_child;
-        else break;
-    }
+    Node *node=tree_search(tree,key);
+    if (is_external(node))return -1;
     return node->key;
 }
 void insert_item(Tree *tree,int key) {
@@ -95,60 +84,71 @@ void free_node(Node *node) {
 }
 int remove_element(Tree *tree,int key) {
     Node *target=tree_search(tree,key);
-    if (target->key==key) {
-        int target_key=target->key;
-        if (is_external(target->left_child)&&is_external(target->right_child)) {//자녀 0개
-            if (target==tree->root) {
-                tree->root=create_external_node(NULL);
-            }
-            else {
-                if (target->parent->key>key) target->parent->left_child=create_external_node(target->parent);//부모 노드 자식 연결 수정
-                else target->parent->right_child=create_external_node(target->parent);
-            }
-            free_node(target);
+    if (is_external(target)) return -1;
+    int target_key=target->key;
+    if (is_external(target->left_child)&&is_external(target->right_child)) {//자녀 0개
+        if (target==tree->root) {
+            tree->root=create_external_node(NULL);
         }
-        else if ((is_internal(target->left_child)&&is_external(target->right_child))||(is_internal(target->right_child)&&is_external(target->left_child))) {//자녀 1개
-            Node *child=target->left_child?target->left_child:target->right_child;
-            if (target==tree->root) {
-                tree->root=child;
-                child->parent=NULL;
-            }
-            else {
-                if (target->parent->key>key) target->parent->left_child=child;//부모 노드 자식 연결 수정
-                else target->parent->right_child=child;
-                child->parent=target->parent;
-            }
-            free_node(target);
+        else {
+            if (target->parent->key>key) target->parent->left_child=create_external_node(target->parent);//부모 노드 자식 연결 수정
+            else target->parent->right_child=create_external_node(target->parent);
         }
-        else if (is_internal(target->right_child)&&is_internal(target->left_child)) { //자녀 2개
-            Node *successor=in_order_successor(target);
-            free(successor->left_child);//계승자->왼쪽 자식 없음(외부노드)-> 삭제
-            successor->parent->left_child=successor->right_child;//계승자: 부모 노드의 왼쪽노드임-> 부모 노드와 계승자의 오른쪽 노드와 연결(오른쪽은 외부여도 무관)
-            successor->right_child->parent=successor->parent;
-            if (target==tree->root) successor->parent=NULL;//타겟이 루트면 타겟 부모 연결 X
-            else {//타겟이 루트가 아니므로 타겟 부모 연결 필요
-                successor->parent=target->parent;
-                if (target->parent->key>key)target->parent->left_child=successor;
-                else target->parent->right_child=successor;
-            }
-            successor->left_child=target->left_child;//계승자와 타겟 자식들 연결
-            successor->right_child=target->right_child;
-            free(target);
-        }
-        return target_key;
+        free_node(target);
     }
-    return 0;
+    else if ((is_internal(target->left_child)&&is_external(target->right_child))||(is_internal(target->right_child)&&is_external(target->left_child))) {//자녀 1개
+        Node *child=target->left_child?target->left_child:target->right_child;
+        if (target==tree->root) {
+            tree->root=child;
+            child->parent=NULL;
+        }
+        else {
+            if (target->parent->key>key) target->parent->left_child=child;//부모 노드 자식 연결 수정
+            else target->parent->right_child=child;
+            child->parent=target->parent;
+        }
+        free_node(target);
+    }
+    else if (is_internal(target->right_child)&&is_internal(target->left_child)) { //자녀 2개
+        Node *successor=in_order_successor(target);
+        free(successor->left_child);//계승자->왼쪽 자식 없음(외부노드)-> 삭제
+        successor->parent->left_child=successor->right_child;//계승자: 부모 노드의 왼쪽노드임-> 부모 노드와 계승자의 오른쪽 노드와 연결(오른쪽은 외부여도 무관)
+        successor->right_child->parent=successor->parent;
+        if (target==tree->root) {
+            successor->parent=NULL;//타겟이 루트면 타겟 부모 연결 X
+            tree->root=successor;
+        }
+        else {//타겟이 루트가 아니므로 타겟 부모 연결 필요
+            successor->parent=target->parent;
+            if (target->parent->key>successor->key)target->parent->left_child=successor;
+            else target->parent->right_child=successor;
+        }
+        successor->left_child=target->left_child;//계승자와 타겟 자식들 연결
+        successor->right_child=target->right_child;
+        free(target);
+    }
+    return target_key;
+}
+void print(Node *node) {
+    if (is_internal(node)) {
+        printf(" %d",node->key);
+        print(node->left_child);
+        print(node->right_child);
+    }
 }
 void free_all_node(Node *node) {
-    if (node) {
-        free_all_node(node->left_child);
-        free_all_node(node->right_child);
-        free(node);
-    }
+    if (!node) return;
+    free_all_node(node->left_child);
+    free_all_node(node->right_child);
+    free(node);
 }
 int main() {
     setbuf(stdout,NULL);
     Tree *tree=malloc(sizeof(*tree));
+    if (!tree) {
+        printf("tree malloc failed");
+        exit(1);
+    }
     tree->root=create_external_node(NULL);
     while (1) {
         char input;
