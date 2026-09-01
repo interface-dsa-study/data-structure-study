@@ -68,8 +68,8 @@ void m(Node **nodeArray, AdjancyElement **adjancyMatrix, int node_data1, int nod
     }
     if (weight == 0)
     {
-        adjancyMatrix[node_data1][node_data2].isFilled == 0;
-        adjancyMatrix[node_data2][node_data1].isFilled == 0;
+        adjancyMatrix[node_data1][node_data2].isFilled = 0;
+        adjancyMatrix[node_data2][node_data1].isFilled = 0;
         free(adjancyMatrix[node_data1][node_data2].edge);
         return;
     }
