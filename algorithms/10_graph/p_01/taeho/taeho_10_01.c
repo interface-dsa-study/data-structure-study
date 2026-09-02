@@ -299,7 +299,7 @@ void free_all(V *v_header,E *e_header) {
     while (e_pointer) {
         E *e_target=e_pointer;
         e_pointer=e_pointer->next;
-        free(e_pointer);
+        free(e_target);
     }
 }
 int main() {
