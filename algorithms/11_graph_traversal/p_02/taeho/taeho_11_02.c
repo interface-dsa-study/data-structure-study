@@ -2,31 +2,15 @@
 #include <stdlib.h>
 typedef struct vertex V;
 typedef struct edge E;
-typedef struct incidence I;
 struct vertex {
     V *next;
     int num;
-    I *i_header;
     int visited;
 };
 struct edge {
     E *next;
     V *v1,*v2;
 };
-struct incidence {
-    I *next;
-    E *edge;
-};
-I* create_incidence(E *edge) {
-    I *new_i=malloc(sizeof(*new_i));
-    if (!new_i) {
-        fprintf(stderr,"incidence malloc failed");
-        exit(1);
-    }
-    new_i->next=NULL;
-    new_i->edge=edge;
-    return new_i;
-}
 V* create_vertex(int num) {
     V *new_v=malloc(sizeof(*new_v));
     if (!new_v) {
@@ -35,7 +19,6 @@ V* create_vertex(int num) {
     }
     new_v->next=NULL;
     new_v->num=num;
-    new_v->i_header=create_incidence(NULL);
     new_v->visited=0;
     return new_v;
 }
@@ -49,13 +32,7 @@ V* find_adjacent(E *edge,V *vertex) {
     if (edge->v1==vertex)return edge->v2;
     return edge->v1;
 }
-I* in_order_incidence(V *vertex,int num) {
-    I *pointer=vertex->i_header;
-    while (pointer&&pointer->next&&find_adjacent(pointer->next->edge,vertex)->num<num) pointer=pointer->next;
-    if (pointer)return pointer;
-    return NULL;
-}
-E* create_edge(V *vertex,int n1,int n2) {
+E* create_edge(V *vertex,E ***matrix,int n1,int n2) {
     E *new_e=malloc(sizeof(*new_e));
     new_e->v1=search_vertex(vertex,n1);
     new_e->v2=search_vertex(vertex,n2);
@@ -64,48 +41,43 @@ E* create_edge(V *vertex,int n1,int n2) {
         return NULL;
     }
     new_e->next=NULL;
-    I *prev=in_order_incidence(new_e->v1,new_e->v2->num);//v1의 incidence에 정렬해서 edge 삽입
-    if (!prev) {
-        printf("-1");
-        return NULL;
-    }
-    I *new_i=create_incidence(new_e);
-    new_i->next=prev->next;
-    prev->next=new_i;
-    if (n1!=n2) {
-        prev=in_order_incidence(new_e->v2,new_e->v1->num);//v2의 incidence에 정렬해서 edge 삽입
-        if (!prev) {
-            printf("-1");
-            return NULL;
-        }
-        new_i=create_incidence(new_e);
-        new_i->next=prev->next;
-        prev->next=new_i;
-    }
+    if (n1!=n2) matrix[n2-1][n1-1]=new_e;
+    matrix[n1-1][n2-1]=new_e;
     return new_e;
 }
 void visit(V *vertex) {
-    vertex->visited=1;
     printf("%d\n",vertex->num);
 }
-void dfs(V *vertex) {
-    visit(vertex);
-    for (I *i_pointer=vertex->i_header->next;i_pointer;i_pointer=i_pointer->next) {
-        V *searching_v=find_adjacent(i_pointer->edge,vertex);
-        if (!searching_v->visited)dfs(searching_v);
+void enqueue(V **queue,V *vertex, int *rear,int n) {
+    vertex->visited=1;
+    queue[*rear]=vertex;
+    *rear=(*rear+1)%n;
+}
+V * dequeue(V **queue, int *front,int n) {
+    V *target=queue[*front];
+    queue[*front]=NULL;
+    *front=(*front+1)%n;
+    return target;
+}
+void bfs(V *vertex,E ***matrix,int n) {
+    V **queue=calloc(n,sizeof(*queue));
+    int *front=calloc(1,sizeof(*front));
+    int *rear=calloc(1,sizeof(*rear));
+    enqueue(queue,vertex,rear,n);
+    while (*front!=*rear) {
+        V *current=dequeue(queue,front,n);
+        visit(current);
+        for (E **column=matrix[current->num-1];column<matrix[current->num-1]+n;column++) {
+            if (!*column)continue;
+            V *searching=find_adjacent(*column,current);
+            if (!searching->visited)enqueue(queue,searching,rear,n);
+        }
     }
 }
 void free_all(V *v_header,E *e_header) {
     V *v_pointer=v_header;
     E *e_pointer=e_header;
     while (v_pointer) {
-        I *i_pointer=v_pointer->i_header;
-        I *i_target=i_pointer;
-        while (i_pointer) {
-            i_target=i_pointer;
-            i_pointer=i_pointer->next;
-            free(i_target);
-        }
         V *v_target=v_pointer;
         v_pointer=v_pointer->next;
         free(v_target);
@@ -119,12 +91,14 @@ void free_all(V *v_header,E *e_header) {
 int main() {
     int n,m,s;
     scanf("%d %d %d",&n,&m,&s);
+    E ***matrix=malloc(n*sizeof(*matrix));//인접 행렬 구현
+    for (E ***row=matrix;row<matrix+n;row++) *row=calloc(n,sizeof(*row));
     V *vertex=create_vertex(1);//헤더노드 없음
     V *v_pointer=vertex;
     for (int i=2;i<=n;i++,v_pointer=v_pointer->next) v_pointer->next=create_vertex(i);
     int n1,n2;
     scanf("%d %d",&n1,&n2);
-    E *edge=create_edge(vertex,n1,n2);//헤더노드 없음
+    E *edge=create_edge(vertex,matrix,n1,n2);//헤더노드 없음
     E *e_pointer=edge;
     for (int i=1;i<m;i++,e_pointer=e_pointer->next) {
         scanf("%d %d",&n1,&n2);
@@ -132,12 +106,15 @@ int main() {
             printf("-1");
             return 0;
         }
-        e_pointer->next=create_edge(vertex,n1,n2);
+        e_pointer->next=create_edge(vertex,matrix,n1,n2);
         if (!e_pointer->next) {
             printf("edge create failed");
             return 0;
         }
     }
-    dfs(search_vertex(vertex,s));
+    bfs(search_vertex(vertex,s),matrix,n);
     free_all(vertex,edge);
+    for (E ***row=matrix;row<matrix+n;row++) free(*row);
+    free(matrix);
+    return 0;
 }

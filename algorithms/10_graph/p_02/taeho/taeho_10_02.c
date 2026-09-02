@@ -162,9 +162,7 @@ int main() {
     V *v_header=calloc(1,sizeof(*v_header));
     E *e_header=calloc(1,sizeof(*e_header));
     E ***matrix=calloc(vertex_amount,sizeof(*matrix));
-    for (E ***row=matrix;row<matrix+vertex_amount;row++) {
-        *row=calloc(vertex_amount,sizeof(*row));
-    }
+    for (E ***row=matrix;row<matrix+vertex_amount;row++) *row=calloc(vertex_amount,sizeof(*row));
     create_graph(v_header,e_header,matrix);
     while (1) {
         char input;
@@ -181,6 +179,7 @@ int main() {
         printf("\n");
     }
     free_all(v_header,e_header);
+    for (E ***row=matrix;row<matrix+vertex_amount;row++) free(*row);
     free(matrix);
     return 0;
 }
