@@ -9,12 +9,13 @@ int second_hash(int key) {
     return q-(key%q);
 }
 int double_hash(int key,int collision_time) {
-    return (hash(key)+collision_time*second_hash(key));
+    return (hash(key)+collision_time*second_hash(key))%m;
 }
 void insert_item(int *bucket,int key) {
     int index=hash(key);
     int i=0;
-    for (;i<m&&bucket[index];i++) {
+    for (;i<m&&bucket[index];) {
+        i++;
         index=double_hash(key,i);
         if (index<0||m<=index)index=(m+index)%m;
     }

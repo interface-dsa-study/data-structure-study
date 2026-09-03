@@ -18,11 +18,12 @@ Node* create_node(Node *prev,int key,Node *next) {
     node->prev=prev;
     node->key=key;
     node->next=next;
+    return node;
 }
-void  insert_item(Node **bucket,int key) {
+void insert_item(Node **bucket,int key) {
     Node *last_node=bucket[hash(key)];
     bucket[hash(key)]=create_node(NULL,key,last_node);
-    if (last_node)last_node->prev=last_node;
+    if (last_node)last_node->prev=bucket[hash(key)];
 }
 void print(Node **bucket) {
     for (Node **bucket_pointer=bucket;bucket_pointer<bucket+m;bucket_pointer++) {

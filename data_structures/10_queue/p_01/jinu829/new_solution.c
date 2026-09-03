@@ -10,7 +10,7 @@ int insertQueue(int *circularQueue, int data, int front, int rear, int q){ //rea
         for (int i = 0; i < q; i++){
             printf(" %d", circularQueue[i]);
         }
-        return rear - 1;
+        return rear != 0 ? rear - 1 : q-1;
     }
     circularQueue[rear] = data;
     return rear;
