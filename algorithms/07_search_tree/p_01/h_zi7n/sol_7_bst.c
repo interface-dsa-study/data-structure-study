@@ -5,14 +5,12 @@ typedef int key;
 
 typedef struct Node {
     key value;
-    struct Node *iChild, *rChild, *parent;
+    struct Node *lChild, *rChild, *parent;
 }Node;
 
-void initNode(Node *node) {
-    node->iChild = NULL;
-    node->rChild = NULL;
-    node = NULL;
-}
+typedef Node Tree{
+
+}Tree;
 
 Node *treeSearch(key value) {
 
@@ -22,7 +20,7 @@ void insertitem(key ikey) {// ikey 는 인서트 키를 의미함.(현재 삽입
     Node *node; treeSearch(ikey);
     if (node == NULL) node->value = ikey;
     else if (ikey < node->value) {
-        if (node->iChild != NULL) node->iChild->value = ikey;
+        if (node->lChild != NULL) node->lChild->value = ikey;
     }
     else if (ikey > node->value) {
         if (node->rChild != NULL) node->rChild->value = ikey;
