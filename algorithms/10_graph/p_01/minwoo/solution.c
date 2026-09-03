@@ -8,85 +8,187 @@
 typedef struct graph {
     int nodenum;
     int weight;
-    struct graph* nextnode;
-    struct graph* nextlist;
+    struct graph* nextvertex;
+    struct graph* nextedge;
 }graph;
 
-graph* make_graph(int nodenum, int weight) {
+graph* make_node(int num, int weight) {
     graph* newnode = malloc(sizeof(graph));
-    newnode->nodenum = nodenum;
+    newnode->nodenum = num;
     newnode->weight = weight;
-    newnode->nextnode = NULL;
-    newnode->nextlist = NULL;
+    newnode->nextvertex = NULL;
+    newnode->nextedge = NULL;
+    return newnode;
+}
+
+void make_graph(graph** node, int startnum, int weight, int endnum) {
+    if (*node == NULL) {
+        *node = make_node(startnum, 0);
+    }
+    graph* tempvertex = *node;
+    while (tempvertex->nextvertex!= NULL && tempvertex->nodenum != startnum) {
+        tempvertex = tempvertex->nextvertex;
+    }
+    if (tempvertex->nodenum != startnum) {
+        tempvertex->nextvertex = make_node(startnum, 0);
+        tempvertex = tempvertex->nextvertex;
+    }
+    graph* tempedge = tempvertex;
+    while (tempedge->nextedge) {
+        tempedge = tempedge->nextedge;
+    }
+    tempedge->nextedge = make_node(endnum, weight);
+    if (startnum == endnum) {
+        return;
+    }
+    graph* temp = *node;
+    while (temp->nextvertex != NULL && temp->nodenum != endnum) {
+        temp = temp->nextvertex;
+    }
+    if (temp->nodenum != endnum) {
+        temp->nextvertex = make_node(endnum, 0);
+        temp = temp->nextvertex;
+    }
+    while (temp->nextedge) {
+        temp = temp->nextedge;
+    }
+    temp->nextedge = make_node(startnum, weight);
 }
 
 void change(graph* adjacencylist, int a, int b, int weight) {
-    graph* temp1 = adjacencylist;
-    graph* temp2 = adjacencylist;
-    while (temp1) {
-        if (temp1->nodenum == a) {
-            break;
-        }
-        temp1->nextnode;
+    graph* vertexA = adjacencylist;
+    graph* vertexB = adjacencylist;
+    graph* tempedgeA = NULL;
+    graph* tempedgeB = NULL;
+    graph* prev1 = NULL;
+    graph* prev2 = NULL;
+    while (vertexA != NULL && vertexA->nodenum != a) {
+        vertexA = vertexA->nextvertex;
     }
-    while (temp2) {
-        if (temp2->nodenum == b) {
-            break;
-        }
-        temp2 = temp2->nextnode;
+
+    while (vertexB != NULL && vertexB->nodenum != b) {
+        vertexB = vertexB->nextvertex;
     }
-    if (temp1 == NULL || temp2 == NULL) {
+    if (vertexA == NULL || vertexB == NULL) {
         printf("-1");
         return;
     }
-    temp1 = temp1->nextlist;
-    while (temp1) {
-        if (temp1->nodenum == temp2->nextnode) {
-            break;
+    tempedgeA = vertexA->nextedge;
+    tempedgeB = vertexB->nextedge;
+    if (weight == 0) {
+        while (tempedgeA != NULL && tempedgeA->nodenum != b) {
+            prev1 = tempedgeA;
+            tempedgeA = tempedgeA->nextedge;
         }
-        temp1 = temp1->nextlist;
+        while (tempedgeB != NULL && tempedgeB->nodenum != a) {
+            prev2 = tempedgeB;
+            tempedgeB = tempedgeB->nextedge;
+        }
+        if (tempedgeA == NULL || tempedgeB == NULL) {
+            return;
+        }
+        else {
+            if (tempedgeA->nextedge == NULL) {
+                prev1->nextedge = NULL;
+            }
+            else {
+                prev1->nextedge = tempedgeA->nextedge;
+            }
+            if (tempedgeB->nextedge == NULL) {
+                prev2->nextedge = NULL;
+            }
+            else {
+                prev2->nextedge = tempedgeB->nextedge;
+            }
+            free(tempedgeA);
+            free(tempedgeB);
+            tempedgeA = NULL;
+            tempedgeB = NULL;
+        }
     }
-    if (temp1->nextlist->weight != weight) {
-        temp1->nextlist->weight = weight;
+    else {
+        while (tempedgeA != NULL && tempedgeA->nodenum != b) {
+            prev1 = tempedgeA;
+            tempedgeA = tempedgeA->nextedge;
+        }
+        while (tempedgeB != NULL && tempedgeB->nodenum != a) {
+            prev2 = tempedgeB;
+            tempedgeB = tempedgeB->nextedge;
+        }
+        if (tempedgeA == NULL || tempedgeB == NULL) {
+            tempedgeA = vertexA->nextedge;
+            tempedgeB = vertexB->nextedge;
+            prev1 = NULL;
+            prev2 = NULL;
+            if (tempedgeA->nodenum > b) {
+                prev1 = tempedgeA;
+            }
+            else {
+                while (tempedgeA != NULL && tempedgeA->nodenum < b) {
+                    prev1 = tempedgeA;
+                    tempedgeA = tempedgeA->nextedge;
+                }
+            }
+            if (tempedgeB->nodenum > a) {
+                prev2 = tempedgeB;
+            }
+            else {
+                while (tempedgeB != NULL && tempedgeB->nodenum < a) {
+                    prev2 = tempedgeB;
+                    tempedgeB = tempedgeB->nextedge;
+                }
+            }
+            graph* next;
+            if (prev1->nextedge == NULL) {
+                prev1->nextedge = make_node(b, weight);
+            }
+            else {
+                next = make_node(b, weight);
+                next->nextedge = prev1->nextedge;
+            }
+            if (prev1->nextedge == NULL) {
+                prev2->nextedge = make_node(a, weight);
+            }
+            else {
+                next = make_node(a, weight);
+            }
+
+        }
+        else {
+
+        }
     }
 
 }
 
 void print(graph* adjacencylist, int findnode) {
-    graph* temp1 = adjacencylist;
-    while (temp1->nodenum != findnode) {
-        temp1 = temp1->nextnode;
+    graph* vertexA = adjacencylist;
+    while (vertexA != NULL && vertexA->nodenum != findnode) {
+        vertexA = vertexA->nextvertex;
     }
-    graph* temp2 = temp1->nextlist;
-    while (temp2) {
-        printf(" %d %d", temp2->nodenum, temp2->weight);
-        temp2 = temp2->nextlist;
+    if (vertexA == NULL) {
+        printf("-1");
+        return;
+    }
+    graph* vertexB = vertexA->nextedge;
+    while (vertexB) {
+        printf(" %d %d", vertexB->nodenum, vertexB->weight);
+        vertexB = vertexB->nextedge;
     }
     printf("\n");
 }
 int main() {
     graph* adjacencylist = NULL;
-    adjacencylist = make_graph(1, 0);
-    adjacencylist->nextlist = make_graph(2,1);
-    adjacencylist->nextlist->nextlist = make_graph(3, 1);
-    adjacencylist->nextlist->nextlist->nextlist = make_graph(4, 1);
-    adjacencylist->nextnode = make_graph(2, 0);
-    adjacencylist->nextnode->nextlist = make_graph(1, 1);
-    adjacencylist->nextnode->nextlist->nextlist = make_graph(3, 1);
-    adjacencylist->nextnode->nextnode = make_graph(3, 0);
-    adjacencylist->nextnode->nextnode->nextlist = make_graph(1, 1);
-    adjacencylist->nextnode->nextnode->nextlist->nextlist = make_graph(5, 4);
-    adjacencylist->nextnode->nextnode->nextnode = make_graph(4, 0);
-    adjacencylist->nextnode->nextnode->nextnode->nextlist = make_graph(1, 1);
-    adjacencylist->nextnode->nextnode->nextnode->nextnode = make_graph(5, 0);
-    adjacencylist->nextnode->nextnode->nextnode->nextnode->nextlist = make_graph(3, 4);
-    adjacencylist->nextnode->nextnode->nextnode->nextnode->nextlist->nextlist = make_graph(5, 4);
-    adjacencylist->nextnode->nextnode->nextnode->nextnode->nextlist->nextlist = make_graph(6, 3);
-    adjacencylist->nextnode->nextnode->nextnode->nextnode->nextnode = make_graph(6, 0);
-    adjacencylist->nextnode->nextnode->nextnode->nextnode->nextnode->nextlist = make_graph(1, 2);
-    adjacencylist->nextnode->nextnode->nextnode->nextnode->nextnode->nextlist->nextlist = make_graph(5, 3);
+    make_graph(&adjacencylist, 1, 1, 2);
+    make_graph(&adjacencylist, 1, 1, 3);
+    make_graph(&adjacencylist, 1, 1, 4);
+    make_graph(&adjacencylist, 2, 1, 3);
+    make_graph(&adjacencylist, 3, 4, 5);
+    make_graph(&adjacencylist, 1, 2, 6);
+    make_graph(&adjacencylist, 5, 4, 5);
+    make_graph(&adjacencylist, 5, 3, 6);
     char ch;
-    int nodenumber, a, b, m;
+    int nodenumber, a, b, w;
     while (1) {
         scanf(" %c", &ch);
         if (ch == 'a') {
@@ -94,7 +196,8 @@ int main() {
             print(adjacencylist, nodenumber);
         }
         else if (ch == 'm') {
-            scanf("%d %d %d", &a, &b, &m);
+            scanf("%d %d %d", &a, &b, &w);
+            change(adjacencylist, a, b, w);
         }
         else {
             break;
