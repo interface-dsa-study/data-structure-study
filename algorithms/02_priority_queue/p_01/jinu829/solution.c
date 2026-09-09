@@ -2,14 +2,18 @@
 #include <stdlib.h>
 #pragma warning(disable : 4996)
 
-void inplacehamsu(int *arr, int n)
+void inplacehamsu(int *arr, int n) //선택 정렬을 수행하는 함수
 {
     int max;
     int maxindex;
     int tmp;
+
+    //가장 뒤 인덱스부터 가장 큰 원소로 채우기.
     for (int i = n-1; i > 0; i--){
         max = 0;
         maxindex = 0;
+        
+        //0번부터 i번까지 중에 가장 큰 원소를 찾아서, 바꾸려는 위치와 바꾸기.
         for (int j = 0; j <= i; j++){
             if (arr[j] > max){
                 max = arr[j];
