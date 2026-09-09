@@ -2,27 +2,24 @@
 #include <stdlib.h>
 #pragma warning(disable : 4996)
 
-int *inplacehamsu(int *arr, int n)
+void inplacehamsu(int *arr, int n)
 {
-    if (n == 1)
-    {
-        return arr;
-    }
-    int max = 0;
+    int max;
     int maxindex;
     int tmp;
-    for (int i = 0; i < n; i++)
-    {
-        if (max < arr[i])
-        {
-            max = arr[i];
-            maxindex = i;
+    for (int i = n-1; i > 0; i--){
+        max = 0;
+        maxindex = 0;
+        for (int j = 0; j <= i; j++){
+            if (arr[j] > max){
+                max = arr[j];
+                maxindex = j;
+            }
         }
+        tmp = arr[i];
+        arr[i] = arr[maxindex];
+        arr[maxindex] = tmp;
     }
-    tmp = arr[n - 1];
-    arr[n - 1] = arr[maxindex];
-    arr[maxindex] = tmp;
-    return inplacehamsu(arr, n - 1);
 }
 
 int main()
@@ -30,7 +27,7 @@ int main()
     int n;
     int *arr = NULL;
     scanf("%d", &n);
-    arr = (int *)malloc(sizeof(int));
+    arr = (int *)malloc(sizeof(int) * n);
     if (arr == NULL)
     {
         printf("잘못된 공간에 접속하였습니다.");
@@ -40,7 +37,7 @@ int main()
     {
         scanf("%d", &arr[i]);
     }
-    arr = inplacehamsu(arr, n);
+    inplacehamsu(arr, n);
     for (int i = 0; i < n; i++)
     {
         printf(" %d", arr[i]);
