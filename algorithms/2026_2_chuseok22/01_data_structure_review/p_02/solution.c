@@ -12,10 +12,13 @@ typedef struct Tree {
 } Tree;
 
 Node *createNode(int data) {
+  // 노드 동적할당
   Node *node = malloc(sizeof(*node));
   if (node == NULL) {
     exit(EXIT_FAILURE);
   }
+
+  // 자식은 NULL 초기화
   node->data = data;
   node->left = NULL;
   node->right = NULL;
@@ -49,6 +52,8 @@ void printNode(Node *root, char command_string[]) {
   printf(" %d", root->data);
 
   Node *current_node = root;
+
+  // command_string 순회하여 명령 수행
   for (int i = 0; i < strlen(command_string); i++) {
     if (command_string[i] == 'L') {
       current_node = current_node->left;
@@ -64,6 +69,8 @@ void destroyTree(Node *root) {
   if (root == NULL) {
     return;
   }
+
+  // 재귀호출하여 메모리 해제
   destroyTree(root->left);
   destroyTree(root->right);
   free(root);
