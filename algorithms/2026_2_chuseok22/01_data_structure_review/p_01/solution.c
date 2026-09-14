@@ -48,7 +48,7 @@ Node *getNode(List *list, int rank) {
 
 void get(List *list, int rank) {
   Node *target_node = getNode(list, rank);
-  if (target_node == NULL || target_node == list->header || target_node == list->trailer) {
+  if (target_node == list->header || target_node == list->trailer) {
     printf("invalid position\n");
     return;
   }
