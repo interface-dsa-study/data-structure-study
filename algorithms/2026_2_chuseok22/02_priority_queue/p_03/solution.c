@@ -37,6 +37,8 @@ void insertionSort(int *array, int size) {
     for (int j = i; j > 0; j--) {
       if (array[j - 1] > array[j]) {
         swap(&array[j - 1], &array[j]);
+      } else {
+        break;
       }
     }
   }
@@ -132,8 +134,8 @@ int main(void) {
   }
 
   // task1(first_array, second_array, n);
-  // task2(first_array, second_array, n);
-  task3(first_array, second_array, n);
+  task2(first_array, second_array, n);
+  // task3(first_array, second_array, n);
 
   // 동적 메모리 해제
   free(first_array);
