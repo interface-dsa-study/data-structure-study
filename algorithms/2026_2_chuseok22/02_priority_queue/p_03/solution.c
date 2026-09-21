@@ -138,4 +138,6 @@ int main(void) {
   // 동적 메모리 해제
   free(first_array);
   free(second_array);
+
+  return EXIT_SUCCESS;
 }
