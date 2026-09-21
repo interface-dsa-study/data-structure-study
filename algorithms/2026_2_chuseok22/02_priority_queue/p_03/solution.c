@@ -21,7 +21,7 @@ void selectionSort(int *array, int size) {
 }
 
 // 선택정렬 역순
-void selectionSortDesending(int *array, int size) {
+void selectionSortDescending(int *array, int size) {
   for (int i = 0; i < size; i++) {
     for (int j = i + 1; j < size; j++) {
       if (array[i] < array[j]) {
@@ -43,6 +43,7 @@ void insertionSort(int *array, int size) {
 }
 
 void task1(int *first_array, int *second_array, int size) {
+  // 선택정렬 시간 측정
   printf("=====실헙 1 시작=====\n");
   clock_t start_time_mills = clock();
   selectionSort(first_array, size);
@@ -50,9 +51,9 @@ void task1(int *first_array, int *second_array, int size) {
   double duration_mills = (double) (end_time_mills - start_time_mills) / CLOCKS_PER_SEC;
   printf("실험 1 선택정렬 시간: %f\n", duration_mills);
 
-
+  // 삽입정렬 시간 측정
   start_time_mills = clock();
-  selectionSort(second_array, size);
+  insertionSort(second_array, size);
   end_time_mills = clock();
   duration_mills = (double) (end_time_mills - start_time_mills) / CLOCKS_PER_SEC;
   printf("실험 1 삽입정렬 시간: %f\n", duration_mills);
@@ -74,7 +75,7 @@ void task2(int *first_array, int *second_array, int size) {
 
   // 삽입정렬 시간측정
   start_time_mills = clock();
-  selectionSort(second_array, size);
+  insertionSort(second_array, size);
   end_time_mills = clock();
   duration_mills = (double) (end_time_mills - start_time_mills) / CLOCKS_PER_SEC;
   printf("실험 2 삽입정렬 시간: %f\n", duration_mills);
@@ -86,8 +87,8 @@ void task3(int *first_array, int *second_array, int size) {
   printf("=====실헙 3 시작=====\n");
 
   // 역순 정렬 진행
-  selectionSort(first_array, size);
-  selectionSort(second_array, size);
+  selectionSortDescending(first_array, size);
+  selectionSortDescending(second_array, size);
 
   // 선택정렬 시간측정
   clock_t start_time_mills = clock();
@@ -98,7 +99,7 @@ void task3(int *first_array, int *second_array, int size) {
 
   // 삽입정렬 시간측정
   start_time_mills = clock();
-  selectionSort(second_array, size);
+  insertionSort(second_array, size);
   end_time_mills = clock();
   duration_mills = (double) (end_time_mills - start_time_mills) / CLOCKS_PER_SEC;
 
@@ -131,8 +132,8 @@ int main(void) {
   }
 
   // task1(first_array, second_array, n);
-  task2(first_array, second_array, n);
-  // task3(first_array, second_array, n);
+  // task2(first_array, second_array, n);
+  task3(first_array, second_array, n);
 
   // 동적 메모리 해제
   free(first_array);
