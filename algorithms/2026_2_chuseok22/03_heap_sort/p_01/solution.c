@@ -36,25 +36,26 @@ void upHeap(int index) {
 }
 
 void downHeap(int index) {
-  int left_child_index = index * 2;
-  int right_child_index = index * 2 + 1;
+  // 왼쪽 자식이 있을 때까지
+  while (index * 2 <= heap_size) {
+    int left_child_index = index * 2;
+    int right_child_index = index * 2 + 1;
 
-  if (left_child_index > heap_size) {
-    return;
-  }
+    // 우선 가장 큰 자식을 왼쪽 자식이라 가정
+    int large_child_index = left_child_index;
 
-  // 왼쪽 자식이 더 큰 경우
-  if (heap[left_child_index] > heap[right_child_index]) {
-    if (heap[left_child_index] > heap[index]) {
-      swapHeap(left_child_index, index);
+    // 오른쪽 자식이 존재하고 오른쪽 자식이 왼쪽 자식보다 더 큰 경우
+    if (right_child_index <= heap_size && heap[right_child_index] > heap[left_child_index]) {
+      large_child_index = right_child_index;
     }
-    downHeap(left_child_index);
-  } else {
-    // 오른쪽 자식이 더 큰 경우
-    if (heap[right_child_index] > heap[index]) {
-      swapHeap(right_child_index, index);
+
+    // 부모가 더 큰 경우 swap 하지 않음
+    if (heap[index] > heap[large_child_index]) {
+      break;
     }
-    downHeap(right_child_index);
+
+    swapHeap(index, large_child_index);
+    index = large_child_index;
   }
 }
 
